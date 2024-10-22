@@ -3,15 +3,15 @@ import os
 from contextlib import asynccontextmanager
 from typing import Annotated, Any
 
-from fastapi import APIRouter, FastAPI
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel, EmailStr
 
-from alembic import command
+# api routers
+from app.api import auth, riot
 
 # db migrations
-from alembic.config import Config
-from app.api import auth
+# from alembic import command
+# from alembic.config import Config
 
 log = logging.getLogger("uvicorn")
 
@@ -37,7 +37,7 @@ log = logging.getLogger("uvicorn")
 
 app = FastAPI()
 
-origins = ["http://localhost:5173"]
+origins = ["http://localhost:3000"]
 
 app.add_middleware(
     CORSMiddleware,
@@ -67,4 +67,5 @@ app.add_middleware(
 #     return user
 
 
-app.include_router(auth.router)
+app.include_router(auth.router, tags=["Authentication"])
+app.include_router(riot.router, tags=["Riot"])

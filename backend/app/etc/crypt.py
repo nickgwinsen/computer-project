@@ -1,16 +1,74 @@
+from datetime import datetime, timedelta, timezone
+
 import bcrypt
 from dotenv import load_dotenv
+from jose import jwt, JWTError
+from app import models
+from pydantic import ValidationError
+from typing import Union, Any
+from fastapi import status, HTTPException
 
-# from config.vars import variables
+from app import config
 
 load_dotenv()
+
+ALGORITHM = "HS256"
+
+
+def create_access_token(
+    subject: Union[str, Any], expires_delta: timedelta = None
+) -> models.Token:
+    """
+    Create an access token for a user.
+
+    Args:
+        subject (Union[str, Any]): The subject of the token.
+        expires_delta (timedelta, optional): The time delta for the token to expire. Defaults to None.
+
+    Returns:
+        str: The encoded JWT token.
+    """
+
+    if expires_delta:
+        expire = datetime.now(timezone.utc) + expires_delta
+    else:
+        expire = datetime.now(timezone.utc) + timedelta(
+            minutes=config.variables.TOKEN_EXPIRY
+        )
+    to_encode = {"exp": expire, "subj": str(subject)}
+    encoded_jwt = jwt.encode(
+        to_encode, config.variables.SECRET_KEY, algorithm=ALGORITHM
+    )
+    return models.Token(access_token=encoded_jwt)
+
+
+def decode_access_token(token: str) -> models.Token:
+    """
+    Decode an access token.
+
+    Args:
+        token (str): The token to decode.
+
+    Returns:
+        str: The decoded token.
+    """
+
+    try:
+        payload = jwt.decode(token, config.variables.SECRET_KEY, algorithms=[ALGORITHM])
+        token_data = models.Token(**payload)
+        return token_data
+    except (JWTError, ValidationError):
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Could not validate credentials",
+        )
 
 
 def hash_password(password: str) -> str:
     bytes = password.encode("utf-8")
     salt = bcrypt.gensalt()
     hash = bcrypt.hashpw(bytes, salt)
-    return {"salt": salt, "hashed_password": hash.decode("utf-8")}
+    return hash.decode("utf-8")
 
 
 def verify_password(plain_password, hash_password) -> bool:
