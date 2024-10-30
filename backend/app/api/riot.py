@@ -7,7 +7,21 @@ from app.config.vars import variables
 router = APIRouter()
 
 
-@router.get("/riot/users/{username}/{tagline}")
+@router.get("/riot/user/{puuid}/matches")
+async def get_matches_by_puuid(puuid: str = Path(...)):
+    url = f"https://americas.api.riotgames.com/lol/match/v5/matches/by-puuid/{puuid}/ids?type=ranked&start=0&count=20"
+    headers = {"X-Riot-Token": variables.API_KEY}
+    print(headers)
+    try:
+        res = requests.get(url, headers=headers)
+        res.raise_for_status()
+        data = res.json()
+        return data
+    except requests.exceptions.RequestException as e:
+        print("Error:: ", e)
+
+
+@router.get("/riot/user/{username}/{tagline}")
 async def get_puuid_by_riot_account(
     username: str = Path(min_length=5, max_length=16),
     tagline: str = Path(min_length=3, max_length=5),
@@ -20,20 +34,6 @@ async def get_puuid_by_riot_account(
         res.raise_for_status()
         data = res.json()
         return data["puuid"]
-    except requests.exceptions.RequestException as e:
-        print("Error:: ", e)
-
-
-@router.get("/riot/matches/{puuid}")
-async def get_matches_by_puuid(puuid: str = Path(...)):
-    url = f"https://americas.api.riotgames.com/lol/match/v5/matches/by-puuid/{puuid}/ids?type=ranked&start=0&count=20"
-    headers = {"X-Riot-Token": variables.API_KEY}
-    print(headers)
-    try:
-        res = requests.get(url, headers=headers)
-        res.raise_for_status()
-        data = res.json()
-        return data
     except requests.exceptions.RequestException as e:
         print("Error:: ", e)
 

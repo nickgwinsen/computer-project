@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
-import { get_puuid, get_game_timeline, get_games_list } from "@/calls/calls";
+import { get_puuid } from "@/calls/calls";
+import MatchHistory from "@/components/MatchHistory";
 
 const UserPage = ({
   params,
@@ -36,7 +37,11 @@ const UserPage = ({
     return <div>{error.message}</div>;
   }
 
-  return <div>Puuid: {puuid}</div>;
+  return (
+    <div>
+      <MatchHistory puuid={puuid} />
+    </div>
+  );
 };
 
 export default UserPage;

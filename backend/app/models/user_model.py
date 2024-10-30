@@ -1,18 +1,27 @@
-from typing import Annotated
+from typing import Annotated, List
+from datetime import datetime
 
+# from app.models import Games
 from sqlalchemy import UniqueConstraint
-from sqlmodel import Field, Session, SQLModel
+from sqlmodel import Field, Relationship, SQLModel
 
 
-class Users(SQLModel, table=True):
+class User(SQLModel, table=True):
+    __tablename__ = "users"
     __table_args__ = (UniqueConstraint("email"),)
     id: int = Field(default=None, primary_key=True)
     email: str = Field(index=True)
     hashed_password: str
 
 
-class RiotUsers(SQLModel, table=True):
-    userID: int = Field(default=None, primary_key=True)
-    riot_user: str = Field(...)
-    riot_tag: str = Field(...)
-    puuid: str
+class RiotUser(SQLModel, table=True):
+    __tablename__ = "riotusers"
+    __table_args__ = (UniqueConstraint("puuid"),)
+    puuid: str = Field(primary_key=True)
+    riot_id: str = Field(index=True)
+    last_updated: datetime = Field(default=None)
+    tier: str | None
+    rank: str | None
+    league_points: int | None
+    wins: int | None
+    losses: int | None

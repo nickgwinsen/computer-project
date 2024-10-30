@@ -1,38 +1,35 @@
+import axios from "axios";
+
 export const get_puuid = async (username: string, tag: string) => {
   try {
-    const res = await fetch(
-      `http://localhost:8000/riot/users/${username}/${tag}`,
-      {
-        method: "GET",
-      }
+    const res = await axios.get(
+      `http://localhost:8000/riot/user/${username}/${tag}`
     );
-    const data = await res.json();
-    return data;
-  } catch (err) {
-    console.log(err);
+    return res.data;
+  } catch (error) {
+    console.error("Error fetching data", error);
+    throw error;
   }
 };
 
 export const get_games_list = async (puuid: string) => {
   try {
-    const res = await fetch(`http://localhost:8000/riot/matches/${puuid}`, {
-      method: "GET",
-    });
-    const data = await res.json();
-    return data;
-  } catch (err) {
-    console.log(err);
+    const res = await axios.get(
+      `http://localhost:8000/riot/user/${puuid}/matches`
+    );
+    return res.data;
+  } catch (error) {
+    console.error("Error fetching data", error);
+    throw error;
   }
 };
 
 export const get_game_timeline = async (match_id: string) => {
   try {
-    const res = await fetch(`http://localhost:8000/riot/match/${match_id}`, {
-      method: "GET",
-    });
-    const data = await res.json();
-    return data;
-  } catch (err) {
-    console.log(err);
+    const res = await axios.get(`http://localhost:8000/riot/match/${match_id}`);
+    return res.data;
+  } catch (error) {
+    console.error("Error fetching data", error);
+    throw error;
   }
 };

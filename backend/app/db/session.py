@@ -8,7 +8,8 @@ from sqlmodel import Session
 
 from app.config.vars import variables
 
-engine = create_engine(variables.DB_STRING)
+# TODO: remove echo in production
+engine = create_engine(variables.DB_STRING, echo=True)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 

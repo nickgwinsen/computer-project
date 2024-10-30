@@ -1,10 +1,12 @@
 "use client";
 import React, { useState } from "react";
-const { isEmail } = require("validator");
+import axios from "axios";
+import isEmail from "validator/lib/isEmail";
+import { redirect } from "next/navigation";
 //import { useNavigate } from 'react-router-dom'
 
 //TODO: update typing later
-const Login = (props: any) => {
+const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [emailError, setEmailError] = useState("");
@@ -14,19 +16,24 @@ const Login = (props: any) => {
 
   const authRequest = async (email: string, password: string) => {
     try {
-      console.log(email, password);
-      const res = await fetch("http://localhost:8000/login", {
-        method: "POST",
-        body: JSON.stringify({ email, password }),
-        headers: { "Content-Type": "application/json" },
-      });
-      const data = await res.json();
-      if (data.access_token) {
-        localStorage.setItem("token", data.access_token);
-        console.log("Success! Token stored.");
+      const response = await axios.post(
+        "http://localhost:8000/login",
+        {
+          email,
+          password,
+        },
+        {
+          withCredentials: true,
+        }
+      );
+
+      if (response.status === 200) {
+        // Handle successful login (e.g., redirect)
+        console.log("Login successful:", response.data);
+        redirect("/");
       }
-    } catch (err) {
-      console.log(err);
+    } catch (error) {
+      console.error("Login failed:", error);
     }
   };
 
