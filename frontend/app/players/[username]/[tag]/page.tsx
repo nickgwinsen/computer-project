@@ -2,12 +2,14 @@
 import { useState, useEffect } from "react";
 import { get_puuid } from "@/calls/calls";
 import MatchHistory from "@/components/MatchHistory";
+import axios from "axios";
 
 const UserPage = ({
   params,
 }: {
   params: { username: string; tag: string };
 }) => {
+  const items = await axios.get;
   const username = params.username;
   const tag = params.tag;
   const [puuid, setPuuid] = useState<string | null>(null);
