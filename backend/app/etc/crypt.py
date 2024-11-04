@@ -1,14 +1,13 @@
 from datetime import datetime, timedelta, timezone
+from typing import Any, Union
 
 import bcrypt
 from dotenv import load_dotenv
-from jose import jwt, JWTError
-from app import models
+from fastapi import HTTPException, status
+from jose import JWTError, jwt
 from pydantic import ValidationError
-from typing import Union, Any
-from fastapi import status, HTTPException
 
-from app import config
+from app import config, models
 
 load_dotenv()
 

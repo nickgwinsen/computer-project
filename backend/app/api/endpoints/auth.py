@@ -1,5 +1,4 @@
-from fastapi import APIRouter, Response, status, HTTPException
-from fastapi.responses import RedirectResponse
+from fastapi import APIRouter, Response, HTTPException
 from fastapi.encoders import jsonable_encoder
 from sqlalchemy import select
 

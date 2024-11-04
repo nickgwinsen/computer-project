@@ -1,47 +1,45 @@
 "use client";
-import { useState, useEffect } from "react";
 import { get_puuid } from "@/calls/calls";
-import MatchHistory from "@/components/MatchHistory";
-import axios from "axios";
+import { useQuery } from "@tanstack/react-query";
+import UserInfo from "@/components/UserInfo";
 
 const UserPage = ({
   params,
 }: {
   params: { username: string; tag: string };
 }) => {
-  const items = await axios.get;
   const username = params.username;
   const tag = params.tag;
-  const [puuid, setPuuid] = useState<string | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<Error | null>(null);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const data = await get_puuid(username, tag);
+  const {
+    data: puuid,
+    error: queryError,
+    isLoading,
+  } = useQuery({
+    queryKey: ["puuid", username, tag],
+    queryFn: async () => {
+      return await get_puuid(username, tag);
+    },
+    enabled: !!username && !!tag,
+  });
 
-        setPuuid(data);
-      } catch (err) {
-        setError(err as Error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchData();
-  }, [username, tag]);
-  if (loading) {
-    return <div>Loading data</div>;
+  if (isLoading) {
+    return <div>Loading...</div>;
   }
 
-  if (error) {
-    return <div>{error.message}</div>;
+  if (queryError) {
+    return <div>Error: {queryError.message}</div>;
   }
 
   return (
     <div>
-      <MatchHistory puuid={puuid} />
+      <h1>
+        {username}#{tag}
+      </h1>
+      {
+        <UserInfo puuid={puuid} />
+        //<MatchHistory puuid={puuid} />
+      }
     </div>
   );
 };
