@@ -62,7 +62,7 @@ async def auth_signup(user: schemas.UserIn, db: SessionDep, response: Response):
 
 @router.post("/logout")
 async def auth_logout(response: Response):
-    response.delete_cookie(key="auth_token", path="/")
+    response.delete_cookie(key="authtoken", path="/")
     # return RedirectResponse("/login")
 
 

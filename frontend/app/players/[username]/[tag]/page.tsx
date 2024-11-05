@@ -1,5 +1,5 @@
 "use client";
-import { get_puuid } from "@/calls/calls";
+import { get_puuid_and_info } from "@/calls/calls";
 import { useQuery } from "@tanstack/react-query";
 import UserInfo from "@/components/UserInfo";
 
@@ -12,13 +12,13 @@ const UserPage = ({
   const tag = params.tag;
 
   const {
-    data: puuid,
+    data: userData,
     error: queryError,
     isLoading,
   } = useQuery({
     queryKey: ["puuid", username, tag],
     queryFn: async () => {
-      return await get_puuid(username, tag);
+      return await get_puuid_and_info(username, tag);
     },
     enabled: !!username && !!tag,
   });
@@ -32,12 +32,13 @@ const UserPage = ({
   }
 
   return (
+    //need to store a user in the database on query
     <div>
       <h1>
-        {username}#{tag}
+        {userData.gameName}#{userData.tagLine}
       </h1>
       {
-        <UserInfo puuid={puuid} />
+        <UserInfo puuid={userData.puuid} />
         //<MatchHistory puuid={puuid} />
       }
     </div>

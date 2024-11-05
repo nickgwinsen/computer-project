@@ -1,4 +1,13 @@
 # db setup and connection function
+"""
+This module sets up the database connection and session management for the application.
+Functions:
+    get_session: Provides a SQLAlchemy session for database operations.
+Variables:
+    engine: SQLAlchemy engine instance connected to the database.
+    SessionLocal: SQLAlchemy session factory.
+    SessionDep: Dependency for FastAPI to inject a database session.
+"""
 from typing import Annotated
 
 from fastapi import Depends

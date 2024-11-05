@@ -1,9 +1,8 @@
 import axios from "axios";
 import { API_URL } from "@/config/constants";
 
-export const get_puuid = async (username: string, tag: string) => {
+export const get_puuid_and_info = async (username: string, tag: string) => {
   try {
-    console.log(API_URL);
     const res = await axios.get(`${API_URL}/riot/user/${username}/${tag}`);
     return res.data;
   } catch (error) {
