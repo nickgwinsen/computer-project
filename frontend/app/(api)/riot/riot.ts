@@ -1,20 +1,16 @@
 import axios from "axios";
 import { API_URL } from "@/config/constants";
+import { IRiotAccount } from "@/app/(api)/riot/riot.types";
 
-export const get_puuid_and_info = async (username: string, tag: string) => {
+export const get_user_info = async (
+  username: string,
+  tag: string
+): Promise<IRiotAccount> => {
   try {
-    const res = await axios.get(`${API_URL}/riot/user/${username}/${tag}`);
-    return res.data;
-  } catch (error) {
-    console.error("Error fetching data", error);
-    throw error;
-  }
-};
-
-export const get_user_info = async (puuid: string) => {
-  try {
-    const res = await axios.get(`${API_URL}/riot/user/info/${puuid}`);
-    return res.data;
+    const res = await axios.get<IRiotAccount>(
+      `${API_URL}/riot/user/${username}/${tag}`
+    );
+    return res.data as IRiotAccount;
   } catch (error) {
     console.error("Error fetching data", error);
     throw error;

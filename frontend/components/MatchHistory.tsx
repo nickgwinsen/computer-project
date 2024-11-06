@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
-import { get_games_list } from "@/calls/calls";
+import { get_games_list } from "@/app/(api)/riot/riot";
 import Match from "./Match";
 
 const MatchHistory = ({ puuid }: { puuid: string | null }) => {

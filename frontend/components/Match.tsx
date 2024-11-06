@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
-import { get_game_timeline } from "@/calls/calls";
+import { get_game_timeline } from "@/app/(api)/riot/riot";
 
 const Match = ({ match_id }: { match_id: string }) => {
   const [matchInfo, setMatchInfo] = useState<string>("");

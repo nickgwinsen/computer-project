@@ -18,7 +18,11 @@ class RiotUser(SQLModel, table=True):
     __tablename__ = "riotusers"
     __table_args__ = (UniqueConstraint("puuid"),)
     puuid: str = Field(primary_key=True)
-    riot_id: str = Field(index=True)
+    summoner_id: str | None
+    riot_id_lower: str = Field(index=True)
+    riot_id: str = Field(...)
+    profile_icon_id: int
+    summoner_level: int
     last_updated: datetime = Field(default=None)
     tier: str | None
     rank: str | None

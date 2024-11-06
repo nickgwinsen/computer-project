@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import axios from "axios";
 import isEmail from "validator/lib/isEmail";
 import { redirect } from "next/navigation";
+import { API_URL } from "@/config/constants";
 //import { useNavigate } from 'react-router-dom'
 
 //TODO: update typing later
@@ -17,7 +18,7 @@ const Login = () => {
   const authRequest = async (email: string, password: string) => {
     try {
       const response = await axios.post(
-        "http://localhost:8000/login",
+        `${API_URL}/login`,
         {
           email,
           password,

@@ -1,7 +1,7 @@
 "use client";
-import { get_puuid_and_info } from "@/calls/calls";
+import { get_user_info } from "@/app/(api)/riot/riot";
 import { useQuery } from "@tanstack/react-query";
-import UserInfo from "@/components/UserInfo";
+import User from "@/components/User";
 
 const UserPage = ({
   params,
@@ -18,7 +18,7 @@ const UserPage = ({
   } = useQuery({
     queryKey: ["puuid", username, tag],
     queryFn: async () => {
-      return await get_puuid_and_info(username, tag);
+      return await get_user_info(username, tag);
     },
     enabled: !!username && !!tag,
   });
@@ -31,16 +31,19 @@ const UserPage = ({
     return <div>Error: {queryError.message}</div>;
   }
 
+  if (!userData) {
+    return <div>No user found</div>;
+  }
   return (
     //need to store a user in the database on query
     <div>
-      <h1>
-        {userData.gameName}#{userData.tagLine}
-      </h1>
+      <User data={userData} />
       {
-        <UserInfo puuid={userData.puuid} />
-        //<MatchHistory puuid={puuid} />
+        // most picked champs (w-l with champ)
+        // recently played with (include w-l with this player)
+        // match history
       }
+      <button>Update</button>
     </div>
   );
 };

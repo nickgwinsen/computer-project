@@ -3,24 +3,24 @@ from fastapi.encoders import jsonable_encoder
 from sqlalchemy import select
 
 from app.db.session import SessionDep
-from app import models, schemas, etc, config
+from app import models, schemas, config, utils
 
 router = APIRouter()
 
 
 @router.post("/login")
 async def auth_login(user: schemas.UserIn, db: SessionDep, response: Response):
-    user_to_verify = select(models.Users).where(models.Users.email == user.email)
-    result = db.exec(user_to_verify).scalars().all()
+    stmt = select(models.User).where(models.User.email == user.email)
+    result = db.exec(stmt).scalars().all()
     result = jsonable_encoder(result)
     try:
         result = result[0]
     except IndexError:
         raise HTTPException(status_code=400, detail="User does not exist")
-    verified = etc.verify_password(user.password, result["hashed_password"])
+    verified = utils.verify_password(user.password, result["hashed_password"])
     if not verified:
         raise HTTPException(status_code=400, detail="Incorrect password")
-    jwt = etc.create_access_token(user.email)
+    jwt = utils.create_access_token(user.email)
     response.set_cookie(
         key="authtoken",
         value=jwt.access_token,
@@ -37,17 +37,17 @@ async def auth_login(user: schemas.UserIn, db: SessionDep, response: Response):
 @router.post("/signup")
 async def auth_signup(user: schemas.UserIn, db: SessionDep, response: Response):
     if (
-        db.exec(select(models.Users).where(models.Users.email == user.email))
+        db.exec(select(models.User).where(models.User.email == user.email))
         .scalars()
         .all()
     ):
         raise HTTPException(status_code=400, detail="Email already exists.")
-    user_hash = etc.hash_password(user.password)
-    user_to_add = models.Users(email=user.email, hashed_password=user_hash)
+    user_hash = utils.hash_password(user.password)
+    user_to_add = models.User(email=user.email, hashed_password=user_hash)
     db.add(user_to_add)
     db.commit()
     db.refresh(user_to_add)
-    jwt = etc.crypt.create_access_token(user.email)
+    jwt = utils.crypt.create_access_token(user.email)
     response.set_cookie(
         key="authtoken",
         value=jwt.access_token,
@@ -60,7 +60,7 @@ async def auth_signup(user: schemas.UserIn, db: SessionDep, response: Response):
     return {"message": "Signup Success"}
 
 
-@router.post("/logout")
+@router.get("/logout")
 async def auth_logout(response: Response):
     response.delete_cookie(key="authtoken", path="/")
     # return RedirectResponse("/login")

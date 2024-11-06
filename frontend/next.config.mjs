@@ -7,6 +7,11 @@ const nextConfig = {
         hostname: "ddragon.leagueoflegends.com",
         port: "",
       },
+      {
+        protocol: "https",
+        hostname: "static.bigbrain.gg",
+        port: "",
+      },
     ],
   },
 };
