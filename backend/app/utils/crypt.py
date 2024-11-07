@@ -15,7 +15,7 @@ ALGORITHM = "HS256"
 
 
 def create_access_token(
-    subject: Union[str, Any], expires_delta: timedelta = None
+    subject: Union[str, Any] = None, expires_delta: timedelta = None
 ) -> models.Token:
     """
     Create an access token for a user.

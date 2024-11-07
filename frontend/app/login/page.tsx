@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import isEmail from "validator/lib/isEmail";
-import { redirect } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { API_URL } from "@/config/constants";
 //import { useNavigate } from 'react-router-dom'
 
@@ -14,6 +14,7 @@ const Login = () => {
   const [passwordError, setPasswordError] = useState("");
 
   //  const navigate = useNavigate()
+  const router = useRouter();
 
   const authRequest = async (email: string, password: string) => {
     try {
@@ -30,8 +31,10 @@ const Login = () => {
 
       if (response.status === 200) {
         // Handle successful login (e.g., redirect)
-        console.log("Login successful:", response.data);
-        redirect("/");
+        localStorage.setItem("token", response.data.access_token);
+        router.push("/");
+      } else {
+        throw new Error(response.data.code || "Authentication Failed!");
       }
     } catch (error) {
       console.error("Login failed:", error);

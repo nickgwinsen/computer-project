@@ -44,6 +44,7 @@ const UserPage = ({
         // match history
       }
       <button>Update</button>
+      <p>Last updated: {userData.last_updated}</p>
     </div>
   );
 };

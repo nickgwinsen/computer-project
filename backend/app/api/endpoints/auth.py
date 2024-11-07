@@ -8,30 +8,24 @@ from app import models, schemas, config, utils
 router = APIRouter()
 
 
+@router.get("/verify-token/{token}")
+async def verify_token(token: str):
+    utils.crypt.decode_access_token(token)
+    return {"message": "Token is valid"}
+
+
 @router.post("/login")
 async def auth_login(user: schemas.UserIn, db: SessionDep, response: Response):
     stmt = select(models.User).where(models.User.email == user.email)
-    result = db.exec(stmt).scalars().all()
+    result = db.exec(stmt).scalar_one_or_none()
     result = jsonable_encoder(result)
-    try:
-        result = result[0]
-    except IndexError:
-        raise HTTPException(status_code=400, detail="User does not exist")
+    if not result:
+        raise HTTPException(status_code=400, detail="Email not found")
     verified = utils.verify_password(user.password, result["hashed_password"])
     if not verified:
         raise HTTPException(status_code=400, detail="Incorrect password")
     jwt = utils.create_access_token(user.email)
-    response.set_cookie(
-        key="authtoken",
-        value=jwt.access_token,
-        httponly=True,
-        secure=False,
-        samesite="lax",
-        max_age=config.variables.TOKEN_EXPIRY,
-        domain="localhost",
-        path="/",
-    )
-    return {"message": config.variables.TOKEN_EXPIRY}
+    return jwt
 
 
 @router.post("/signup")
@@ -48,16 +42,7 @@ async def auth_signup(user: schemas.UserIn, db: SessionDep, response: Response):
     db.commit()
     db.refresh(user_to_add)
     jwt = utils.crypt.create_access_token(user.email)
-    response.set_cookie(
-        key="authtoken",
-        value=jwt.access_token,
-        httponly=True,
-        secure=False,
-        samesite="None",
-        max_age=config.variables.TOKEN_EXPIRY,
-        path="/",
-    )
-    return {"message": "Signup Success"}
+    return jwt
 
 
 @router.get("/logout")

@@ -7,4 +7,5 @@ export interface IRiotAccount {
   league_points: number;
   wins: number;
   losses: number;
+  last_updated: string;
 }
