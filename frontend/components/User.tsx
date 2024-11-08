@@ -1,6 +1,6 @@
 import { IRiotAccount } from "@/app/(api)/riot/riot.types";
 import Image from "next/image";
-import { BASE_DD_URL, BASE_BIGBRAIN_URL } from "@/config/constants";
+import { BASE_DD_URL } from "@/config/constants";
 
 const User = ({ data }: { data: IRiotAccount }) => {
   return (
@@ -15,15 +15,17 @@ const User = ({ data }: { data: IRiotAccount }) => {
       <h2>
         {data.tier} {data.rank}
       </h2>
+      <h3>Level {data.summoner_level}</h3>
       <Image
-        src={`${BASE_BIGBRAIN_URL}/ranks/s13/${data.tier.toLowerCase()}.png`}
+        src={`/static/${data.tier.toLowerCase()}.png`}
         alt=""
         width={100}
         height={100}
       />
       <h3>{data.league_points} LP</h3>
       <h3>
-        {data.wins}W {data.losses}L
+        {data.wins}W {data.losses}L{" "}
+        {((data.wins / (data.wins + data.losses)) * 100).toFixed(1)}% Win Rate
       </h3>
     </div>
   );

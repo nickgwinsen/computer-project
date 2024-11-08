@@ -9,7 +9,7 @@ const nextConfig = {
       },
       {
         protocol: "https",
-        hostname: "static.bigbrain.gg",
+        hostname: "ddragon.canisback.com",
         port: "",
       },
     ],

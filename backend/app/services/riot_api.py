@@ -74,3 +74,30 @@ def populate_user(username: str, tagline: str) -> models.RiotUser:
         wins=league_info[0]["wins"],
         losses=league_info[0]["losses"],
     )
+
+
+# if we have never seen this user in the database we will need to get the last 20 matches. If we have seen this user before, retrieve their matches from the database. If we update, wipe the n oldest matches and add the new ones.
+def get_ranked_match_history(puuid: str) -> dict:
+    url = f"https://americas.api.riotgames.com/lol/match/v5/matches/by-puuid/{puuid}/ids?type=rankedstart=0&count=20"
+    headers = {"X-Riot-Token": config.vars.variables.API_KEY}
+    try:
+        res = requests.get(url, headers=headers)
+        res.raise_for_status()
+        data = res.json()
+        # data is a list of match ids, 20 in total
+        return data
+    except requests.exceptions.RequestException as e:
+        print("Error: ", e)
+
+
+def query_match_stats(match_id: str) -> dict:
+    url = f"https://americas.api.riotgames.com/lol/match/v5/matches/{match_id}"
+    headers = {"X-Riot-Token": config.vars.variables.API_KEY}
+    try:
+        res = requests.get(url, headers=headers)
+        res.raise_for_status()
+        data = res.json()
+        # data is a match stats
+        return data
+    except requests.exceptions.RequestException as e:
+        print("Error: ", e)

@@ -42,7 +42,10 @@ async def get_account_data_on_page_load(
         print("User not found in database")
         try:
             user = services.populate_user(username, tagline)
-            print(user)
+            print(
+                "!!!!!!trying to populate the user to the database with the following data!!!!!:  ",
+                user,
+            )
             db.add(user)
             db.commit()
             db.refresh(user)
@@ -81,16 +84,7 @@ async def update_account_data(
 
 
 @router.get("/riot/match/{match_id}")
-async def get_match_and_match_timeline(match_id: str = Path(...)):
-    url = f"https://americas.api.riotgames.com/lol/match/v5/matches/{match_id}"
-    headers = {"X-Riot-Token": variables.API_KEY}
-    try:
-        res = requests.get(url, headers=headers)
-        res_timeline = requests.get(url, headers=headers)
-        res.raise_for_status()
-        res_timeline.raise_for_status()
-        data = res.json()
-        data_timeline = res_timeline.json()
-        return {"overall_match_data": data, "match_timeline": data_timeline}
-    except requests.exceptions.RequestException as e:
-        print("Error: ", e)
+async def get_match_information(match_id: str = Path(...)):
+    match = services.query_match_stats(match_id)
+    participants = match["metadata"]["participants"]
+    # query riot for each participant's name

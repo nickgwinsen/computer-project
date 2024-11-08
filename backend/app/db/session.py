@@ -31,4 +31,5 @@ def get_session():
         yield session
 
 
+# Dependency for FastAPI to inject a database session
 SessionDep = Annotated[Session, Depends(get_session)]

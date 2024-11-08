@@ -9,3 +9,4 @@ class Player(SQLModel, table=True):
     puuid: str
     champion_id: int
     lane: str
+    win: bool

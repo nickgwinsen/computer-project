@@ -10,7 +10,8 @@ class Variables:
     DB_STRING = os.getenv("POSTGRES_STRING")
     SECRET_KEY = os.getenv("SECRET_KEY")
     ALEMBIC_PATH = os.getenv("ALEMBIC_PATH")
-    TOKEN_EXPIRY = int(os.getenv("ACCESS_TOKEN_EXPIRY"))
+    ACCESS_TOKEN_EXPIRY = 60 * 2
+    REFRESH_TOKEN_EXPIRY = 60 * 24
 
 
 variables = Variables()

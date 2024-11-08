@@ -2,6 +2,7 @@
 import { get_user_info } from "@/app/(api)/riot/riot";
 import { useQuery } from "@tanstack/react-query";
 import User from "@/components/User";
+import withAuth from "@/components/withAuth";
 
 const UserPage = ({
   params,
@@ -18,7 +19,7 @@ const UserPage = ({
   } = useQuery({
     queryKey: ["puuid", username, tag],
     queryFn: async () => {
-      return await get_user_info(username, tag);
+      return await get_user_info(username.toLowerCase(), tag.toLowerCase());
     },
     enabled: !!username && !!tag,
   });
@@ -49,4 +50,4 @@ const UserPage = ({
   );
 };
 
-export default UserPage;
+export default withAuth(UserPage);

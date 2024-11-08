@@ -17,13 +17,12 @@ class UserIn(UserBase):
     )
 
 
-class UserOut(BaseModel):
+class UserOut(UserBase):
     pass
 
 
 class UserUpdate(BaseModel):
     email: Optional[str]
-    riot_account: Optional[str]
 
 
 class UserUpdatePassword(BaseModel):
