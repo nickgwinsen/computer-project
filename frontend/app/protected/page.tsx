@@ -1,12 +1,13 @@
-"use client";
-import { withAuth } from "@/components/withAuth";
+import ProtectedPage from "@/components/ProtectedPage";
 
-const ProtectedPage = () => {
+const ProtectedRoute = () => {
   return (
-    <>
-      <div>authenticated route</div>
-    </>
+    <div>
+      <ProtectedPage>
+        <h1>Protected Route</h1>
+      </ProtectedPage>
+    </div>
   );
 };
 
-export default withAuth(ProtectedPage);
+export default ProtectedRoute;
