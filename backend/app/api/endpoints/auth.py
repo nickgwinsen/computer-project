@@ -10,17 +10,15 @@ router = APIRouter()
 
 @router.get("/verify-token")
 async def verify_token(request: Request):
-    print(request.headers)
-    auth_header = request.headers.get("Authorization")
-    if auth_header is None:
+    token = request.cookies.get("authtoken")
+    if token is None:
         raise HTTPException(status_code=400, detail="Authorization header is required")
-    token = request.headers.get("Authorization").split("Bearer ")[1]
-    utils.crypt.decode_refresh_token(token)
+    utils.crypt.decode_access_token(token)
     return {"message": "Token is valid"}
 
 
 @router.post("/user/login")
-async def auth_login(user: schemas.UserIn, db: SessionDep):
+async def auth_login(user: schemas.UserIn, db: SessionDep, response: Response):
     result = crud.user.get_by_email(db, user.email)
     if not result:
         raise HTTPException(status_code=400, detail="Email not found")
@@ -28,12 +26,15 @@ async def auth_login(user: schemas.UserIn, db: SessionDep):
     if not verified:
         raise HTTPException(status_code=400, detail="Incorrect password")
     access_token_expires = config.variables.ACCESS_TOKEN_EXPIRY
-    refresh_token_expires = config.variables.REFRESH_TOKEN_EXPIRY
-    return models.Token(
-        access_token=utils.crypt.create_access_token(
-            result["email"], access_token_expires
-        )
+    response.set_cookie(
+        key="authtoken",
+        value=utils.crypt.create_access_token(result["email"], access_token_expires),
+        httponly=True,
+        max_age=access_token_expires,
+        expires=access_token_expires,
+        path="/",
     )
+    return {"message": "Login successful"}
 
 
 @router.post("/user/signup", response_model=schemas.UserOut)

@@ -30,23 +30,7 @@ def create_access_token(
     return encoded_jwt
 
 
-def create_refresh_token(
-    subject: Union[str, Any] = None, expires_delta: timedelta = None
-) -> models.Token:
-    if expires_delta:
-        expire = datetime.now(timezone.utc) + timedelta(expires_delta)
-    else:
-        expire = datetime.now(timezone.utc) + timedelta(
-            minutes=config.variables.REFRESH_TOKEN_EXPIRY
-        )
-    to_encode = {"exp": expire, "subj": str(subject)}
-    encoded_jwt = jwt.encode(
-        to_encode, config.variables.SECRET_KEY, algorithm=ALGORITHM
-    )
-    return encoded_jwt
-
-
-def decode_refresh_token(token: str) -> str | None:
+def decode_access_token(token: str) -> str | None:
     try:
         payload = jwt.decode(token, config.variables.SECRET_KEY, algorithms=[ALGORITHM])
         user_email: str = payload.get("subj")

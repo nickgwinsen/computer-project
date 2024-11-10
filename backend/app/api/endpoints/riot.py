@@ -1,5 +1,5 @@
 # riot endpoints
-from fastapi import APIRouter, Path
+from fastapi import APIRouter, Path, Request
 import requests
 from app.db.session import SessionDep
 from app.config.vars import variables
@@ -24,9 +24,14 @@ async def get_matches_by_puuid(puuid: str = Path(...)):
         print("Error: ", e)
 
 
-@router.get("/riot/user/{username}/{tagline}", response_model=schemas.RiotAccount)
+# get request
+@router.get(
+    "/riot/user/{username}/{tagline}",
+    response_model=schemas.RiotAccount,
+)
 async def get_account_data_on_page_load(
     db: SessionDep,
+    request: Request,
     username: str = Path(min_length=5, max_length=16),
     tagline: str = Path(min_length=3, max_length=5),
 ):
@@ -36,19 +41,19 @@ async def get_account_data_on_page_load(
     result = db.exec(stmt)
     user = result.scalar_one_or_none()
     if user:
-        print("User found in database")
+        # print("User found in database")
         return schemas.RiotAccount.model_validate(user)
     else:
-        print("User not found in database")
+        # print("User not found in database")
         try:
             user = services.populate_user(username, tagline)
             print(
                 "!!!!!!trying to populate the user to the database with the following data!!!!!:  ",
                 user,
             )
-            db.add(user)
-            db.commit()
-            db.refresh(user)
+            # db.add(user)
+            # db.commit()
+            # db.refresh(user)
             return schemas.RiotAccount.model_validate(user)
         except Exception as e:
             print("Error on insertion of user", e)

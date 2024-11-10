@@ -9,14 +9,19 @@ import { useAuth } from "../providers/authProvider";
 
 //TODO: update typing later
 const Login = () => {
-  const { setToken } = useAuth();
+  const { isAuthenticated } = useAuth();
+  const [loading, isLoading] = useState(true);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [emailError, setEmailError] = useState("");
   const [passwordError, setPasswordError] = useState("");
-
   //  const navigate = useNavigate()
   const router = useRouter();
+
+  if (isAuthenticated) {
+    router.push("/");
+    return <div>loading...</div>;
+  }
 
   const authRequest = async (email: string, password: string) => {
     try {
@@ -32,8 +37,6 @@ const Login = () => {
       );
 
       if (response.status === 200) {
-        // Handle successful login (e.g., redirect)
-        setToken(response.data.access_token);
         router.push("/");
       } else {
         throw new Error(response.data.code || "Authentication Failed!");

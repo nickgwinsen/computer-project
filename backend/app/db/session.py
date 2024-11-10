@@ -18,7 +18,7 @@ from sqlmodel import Session
 from app.config.vars import variables
 
 # TODO: remove echo in production
-engine = create_engine(variables.DB_STRING, echo=True)
+engine = create_engine(variables.DB_STRING)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 

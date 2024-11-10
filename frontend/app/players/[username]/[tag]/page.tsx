@@ -2,6 +2,7 @@
 import { get_user_info } from "@/app/(api)/riot/riot";
 import { useQuery } from "@tanstack/react-query";
 import User from "@/components/User";
+import { useAuth } from "@/app/providers/authProvider";
 
 const UserPage = ({
   params,
@@ -10,7 +11,7 @@ const UserPage = ({
 }) => {
   const username = params.username;
   const tag = params.tag;
-
+  const { isAuthenticated } = useAuth();
   const {
     data: userData,
     error: queryError,
@@ -20,7 +21,7 @@ const UserPage = ({
     queryFn: async () => {
       return await get_user_info(username.toLowerCase(), tag.toLowerCase());
     },
-    enabled: !!username && !!tag,
+    enabled: isAuthenticated && !!username && !!tag,
   });
 
   if (isLoading) {
@@ -32,7 +33,7 @@ const UserPage = ({
   }
 
   if (!userData) {
-    return <div>No user found</div>;
+    return <div>You are unauthorized to view this content.</div>;
   }
   return (
     //need to store a user in the database on query
