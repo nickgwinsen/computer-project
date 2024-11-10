@@ -51,12 +51,23 @@ def decode_refresh_token(token: str) -> str | None:
         payload = jwt.decode(token, config.variables.SECRET_KEY, algorithms=[ALGORITHM])
         user_email: str = payload.get("subj")
         if user_email is None:
-            raise ValueError("Invalid Credentials")
-        token_expire = payload.get("exp")
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Invalid credentials",
+            )
+        token_expire: datetime = payload.get("exp")
         if token_expire is None:
-            raise ValueError("Invalid Credentials")
-        if datetime.now(timezone.utc) > datetime.fromtimestamp(token_expire):
-            raise ValueError("Token expired")
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Invalid credentials",
+            )
+        if datetime.now(timezone.utc) > datetime.fromtimestamp(
+            token_expire, timezone.utc
+        ):
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Expired token",
+            )
         return user_email
     except (JWTError, ValidationError):
         raise HTTPException(

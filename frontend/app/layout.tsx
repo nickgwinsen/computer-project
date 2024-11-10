@@ -12,6 +12,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      {
+        // We must ensure our app is wrapped by the AuthProvider we created or else the useAuth hook will not work
+      }
       <AuthProvider>
         <QueryClientProvider client={queryClient}>
           <body>{children}</body>

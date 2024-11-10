@@ -1,4 +1,4 @@
-import axios from "axios";
+import axiosInstance from "@/config/axios";
 import {
   createContext,
   ReactNode,
@@ -20,9 +20,13 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [token, setAuthToken] = useState<string | null>(
-    localStorage.getItem("token")
-  );
+  const [token, setAuthToken] = useState<string | null>(() => {
+    //runs only when component is mounted because nextjs is server side rendered, thus causing an error when we try to access localStorage
+    if (typeof window !== "undefined") {
+      return localStorage.getItem("token");
+    }
+    return null;
+  });
 
   // for updating the token when we are outside of the provider
   const setToken = (newToken: string) => {
@@ -30,12 +34,21 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   // for setting the default authorization header in axios and storing the token value in local storage
+  //this useEffect will run anytime the token value changes.
   useEffect(() => {
+    console.log("Token state changed", token);
     if (token) {
-      axios.defaults.headers.common["Authorization"] = "Bearer " + token;
+      //all http requests using axios will have this header
+      console.log("Setting Auth Header");
+      axiosInstance.defaults.headers.common["Authorization"] =
+        "Bearer " + token;
+      console.log(
+        "Current axios headers:",
+        axiosInstance.defaults.headers.common
+      );
       localStorage.setItem("token", token);
     } else {
-      delete axios.defaults.headers.common["Authorization"];
+      delete axiosInstance.defaults.headers.common["Authorization"];
       localStorage.removeItem("token");
     }
   }, [token]);

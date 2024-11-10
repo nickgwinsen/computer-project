@@ -2,7 +2,6 @@
 import { get_user_info } from "@/app/(api)/riot/riot";
 import { useQuery } from "@tanstack/react-query";
 import User from "@/components/User";
-import withAuth from "@/components/withAuth";
 
 const UserPage = ({
   params,
@@ -50,4 +49,4 @@ const UserPage = ({
   );
 };
 
-export default withAuth(UserPage);
+export default UserPage;

@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Response, HTTPException
+from fastapi import APIRouter, Response, HTTPException, Request
 from fastapi.encoders import jsonable_encoder
 from sqlalchemy import select
 
@@ -8,8 +8,13 @@ from app import models, schemas, utils, crud, config
 router = APIRouter()
 
 
-@router.get("/verify-token/{token}")
-async def verify_token(token: str):
+@router.get("/verify-token")
+async def verify_token(request: Request):
+    print(request.headers)
+    auth_header = request.headers.get("Authorization")
+    if auth_header is None:
+        raise HTTPException(status_code=400, detail="Authorization header is required")
+    token = request.headers.get("Authorization").split("Bearer ")[1]
     utils.crypt.decode_refresh_token(token)
     return {"message": "Token is valid"}
 

@@ -4,10 +4,12 @@ import axios from "axios";
 import isEmail from "validator/lib/isEmail";
 import { useRouter } from "next/navigation";
 import { API_URL } from "@/config/constants";
+import { useAuth } from "../providers/authProvider";
 //import { useNavigate } from 'react-router-dom'
 
 //TODO: update typing later
 const Login = () => {
+  const { setToken } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [emailError, setEmailError] = useState("");
@@ -31,7 +33,7 @@ const Login = () => {
 
       if (response.status === 200) {
         // Handle successful login (e.g., redirect)
-        localStorage.setItem("token", response.data.access_token);
+        setToken(response.data.access_token);
         router.push("/");
       } else {
         throw new Error(response.data.code || "Authentication Failed!");
