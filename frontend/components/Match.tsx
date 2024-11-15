@@ -1,33 +1,30 @@
 "use client";
 import { useState, useEffect } from "react";
-import { get_game_timeline } from "@/app/(api)/riot/riot";
+import { getGameInformation } from "@/app/(api)/riot/riot";
+import { useQuery } from "@tanstack/react-query";
 
-const Match = ({ match_id }: { match_id: string }) => {
-  const [matchInfo, setMatchInfo] = useState<string>("");
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<Error | null>(null);
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const data = await get_game_timeline(match_id);
-        console.log(data);
-        setMatchInfo(match_id);
-      } catch (err) {
-        setError(err as Error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchData();
-  }, [match_id]);
-  if (loading) {
-    return <div>Loading data</div>;
+const Match = ({ puuid, match_id }: { puuid: string; match_id: string }) => {
+  const {
+    data: matchData,
+    error: queryError,
+    isLoading,
+  } = useQuery({
+    queryKey: ["match", puuid, match_id],
+    queryFn: async () => {
+      return await getGameInformation(puuid, match_id);
+    },
+    enabled: !!puuid && !!match_id,
+  });
+  if (isLoading) {
+    return <div>Loading...</div>;
   }
-
-  if (error) {
-    return <div>{error.message}</div>;
+  if (queryError) {
+    return <div>Error: {queryError.message}</div>;
   }
-
+  if (!matchData) {
+    return <div>No match found.</div>;
+  }
+  const matchInfo = JSON.stringify(matchData);
   return <p>{matchInfo}</p>;
 };
 

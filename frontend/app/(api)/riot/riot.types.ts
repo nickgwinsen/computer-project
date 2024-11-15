@@ -1,4 +1,5 @@
 export interface IRiotAccount {
+  puuid: string;
   profile_icon_id: number;
   riot_id: string;
   summoner_level: number;

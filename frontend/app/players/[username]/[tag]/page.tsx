@@ -1,8 +1,9 @@
 "use client";
-import { get_user_info } from "@/app/(api)/riot/riot";
+import { getUserInfo } from "@/app/(api)/riot/riot";
 import { useQuery } from "@tanstack/react-query";
 import User from "@/components/User";
 import { useAuth } from "@/app/providers/authProvider";
+import MatchHistory from "@/components/MatchHistory";
 
 const UserPage = ({
   params,
@@ -20,7 +21,7 @@ const UserPage = ({
   } = useQuery({
     queryKey: ["puuid", username, tag],
     queryFn: async () => {
-      return await get_user_info(username.toLowerCase(), tag.toLowerCase());
+      return await getUserInfo(username.toLowerCase(), tag.toLowerCase());
     },
     enabled: isAuthenticated && !!username && !!tag,
   });
@@ -40,7 +41,7 @@ const UserPage = ({
   if (!userData) {
     return <div>User not found.</div>;
   }
-  const riotUser = userData.riot_id;
+  //const riotUser = userData.riot_id;
   return (
     //need to store a user in the database on query
     <div>
@@ -52,7 +53,7 @@ const UserPage = ({
       }
       <button>Update</button>
       <p>Last updated: {userData.last_updated}</p>
-      {/* <MatchHistory /> */}
+      {<MatchHistory puuid={userData.puuid} />}
     </div>
   );
 };

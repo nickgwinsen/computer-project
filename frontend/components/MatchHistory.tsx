@@ -1,43 +1,38 @@
 "use client";
-import { useState, useEffect } from "react";
-import { get_games_list } from "@/app/(api)/riot/riot";
+import { getGamesList } from "@/app/(api)/riot/riot";
+//import Match from "./Match";
+import { useQuery } from "@tanstack/react-query";
 import Match from "./Match";
 
-const MatchHistory = ({ puuid }: { puuid: string | null }) => {
-  const [matchHistory, setMatchHistory] = useState<string[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<Error | null>(null);
-  useEffect(() => {
-    if (puuid == null) {
-      setError(new Error("player doesn't exist"));
-      setLoading(false);
-      return;
-    }
-    const fetchData = async () => {
-      try {
-        const data = await get_games_list(puuid);
-        //console.log(data);
-        setMatchHistory(data);
-      } catch (err) {
-        setError(err as Error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchData();
-  }, [puuid]);
-  if (loading) {
-    return <div>Loading data</div>;
+const MatchHistory = ({ puuid }: { puuid: string }) => {
+  const {
+    data: gamesData,
+    error: queryError,
+    isLoading,
+  } = useQuery({
+    queryKey: ["games", puuid],
+    queryFn: async () => {
+      return await getGamesList(puuid);
+    },
+    enabled: !!puuid,
+  });
+  if (isLoading) {
+    return <div>Loading...</div>;
   }
-
-  if (error) {
-    return <div>{error.message}</div>;
+  if (queryError) {
+    return <div>Error: {queryError.message}</div>;
   }
-
+  if (!gamesData) {
+    return <div>No games found.</div>;
+  }
+  //will return a big structured box with all the games in it
   return (
     <ul>
-      {matchHistory.map((match, index) => (
-        <Match key={index} match_id={match} />
+      {gamesData.map((game: string) => (
+        <li key={game}>
+          {game}
+          <Match puuid={puuid} match_id={game} />
+        </li>
       ))}
     </ul>
   );

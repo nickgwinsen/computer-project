@@ -2,7 +2,7 @@ import axiosInstance from "@/config/axios";
 import { API_URL } from "@/config/constants";
 import { IRiotAccount } from "@/app/(api)/riot/riot.types";
 
-export const get_user_info = async (
+export const getUserInfo = async (
   username: string,
   tag: string
 ): Promise<IRiotAccount> => {
@@ -17,9 +17,11 @@ export const get_user_info = async (
   }
 };
 
-export const get_games_list = async (puuid: string) => {
+export const getGamesList = async (puuid: string) => {
   try {
-    const res = await axiosInstance.get(`${API_URL}riot/user/${puuid}/matches`);
+    const res = await axiosInstance.get(
+      `${API_URL}/riot/user/${puuid}/matches`
+    );
     return res.data;
   } catch (error) {
     console.error("Error fetching data", error);
@@ -27,9 +29,11 @@ export const get_games_list = async (puuid: string) => {
   }
 };
 
-export const get_game_timeline = async (match_id: string) => {
+export const getGameInformation = async (puuid: string, match_id: string) => {
   try {
-    const res = await axiosInstance.get(`${API_URL}riot/match/${match_id}`);
+    const res = await axiosInstance.get(
+      `${API_URL}/riot/user/${puuid}/match/${match_id}`
+    );
     return res.data;
   } catch (error) {
     console.error("Error fetching data", error);

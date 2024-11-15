@@ -4,6 +4,7 @@ from typing import List
 
 
 class RiotAccount(BaseModel):
+    puuid: str
     profile_icon_id: int
     riot_id: str
     summoner_level: int

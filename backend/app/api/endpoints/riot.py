@@ -11,7 +11,7 @@ from typing import List
 router = APIRouter()
 
 
-@router.get("/riot/user/{puuid}/match-history", response_model=List)
+@router.get("/riot/user/{puuid}/matches", response_model=List)
 async def get_match_history(
     start_time: int | None = None,
     puuid: str = Path(...),
