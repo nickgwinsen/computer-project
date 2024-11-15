@@ -9,6 +9,7 @@ const UserPage = ({
 }: {
   params: { username: string; tag: string };
 }) => {
+  //store the last updated date as a state variable where it is in timestamp form so we can prop drill it down to the match history component
   const username = params.username;
   const tag = params.tag;
   const { isAuthenticated } = useAuth();
@@ -32,9 +33,14 @@ const UserPage = ({
     return <div>Error: {queryError.message}</div>;
   }
 
-  if (!userData) {
+  if (!isAuthenticated) {
     return <div>You are unauthorized to view this content.</div>;
   }
+
+  if (!userData) {
+    return <div>User not found.</div>;
+  }
+  const riotUser = userData.riot_id;
   return (
     //need to store a user in the database on query
     <div>
@@ -46,6 +52,7 @@ const UserPage = ({
       }
       <button>Update</button>
       <p>Last updated: {userData.last_updated}</p>
+      {/* <MatchHistory /> */}
     </div>
   );
 };
