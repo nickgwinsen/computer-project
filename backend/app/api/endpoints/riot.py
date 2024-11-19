@@ -122,9 +122,39 @@ async def get_match_information(
         db.commit()
         curr_player = None
         for player in players:
+            stmt = select(models.Champion).where(
+                models.Champion.champion_id == player.champion_id
+            )
+            result = db.exec(stmt)
+            champion = result.scalar_one_or_none()
+            if champion:
+                if player.win == True:
+                    champion.wins += 1
+                else:
+                    champion.losses += 1
+                db.commit()
+            else:
+                if player.win == True:
+                    db.add(
+                        models.Champion(
+                            champion_id=player.champion_id,
+                            champion_name=player.champion_name,
+                            wins=1,
+                            losses=0,
+                        )
+                    )
+                else:
+                    db.add(
+                        models.Champion(
+                            champion_id=player.champion_id,
+                            champion_name=player.champion_name,
+                            wins=0,
+                            losses=1,
+                        )
+                    )
+                db.commit()
             if player.puuid == puuid:
                 curr_player = player
-                break
         stats = services.create_stats_from_matchdata(players, match_info)
         db.add_all(stats)
         db.commit()
@@ -140,3 +170,11 @@ async def get_match_information(
                 break
     return {"match": match, "player": curr_player, "stat": return_stat}
     # query riot for each participant's name
+
+
+@router.get("/riot/champions", response_model=dict)
+async def get_champions(db: SessionDep):
+    stmt = select(models.Champion)
+    result = db.exec(stmt)
+    champions = result.scalars().all()
+    return champions

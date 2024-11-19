@@ -1,23 +1,29 @@
 "use client";
-import { getUserInfo } from "@/app/(api)/riot/riot";
+import { useState, useEffect } from "react";
+import { getUserInfo, updateUserInfo } from "@/app/(api)/riot/riot";
 import { useQuery } from "@tanstack/react-query";
 import User from "@/components/User";
 import { useAuth } from "@/app/providers/authProvider";
 import MatchHistory from "@/components/MatchHistory";
+import ChampionStatistics from "@/components/ChampionStatistics";
 
 const UserPage = ({
   params,
 }: {
   params: { username: string; tag: string };
 }) => {
-  //store the last updated date as a state variable where it is in timestamp form so we can prop drill it down to the match history component
-  const username = params.username;
-  const tag = params.tag;
+  const { username, tag } = params;
+  const [update, setUpdate] = useState(false);
+  const [champions, setChampions] = useState([]);
+  const [commonTeammates, setCommonTeammates] = useState({});
+  const [preferredRoles, setPreferredRoles] = useState({});
+
   const { isAuthenticated } = useAuth();
   const {
     data: userData,
     error: queryError,
     isLoading,
+    refetch,
   } = useQuery({
     queryKey: ["puuid", username, tag],
     queryFn: async () => {
@@ -25,6 +31,15 @@ const UserPage = ({
     },
     enabled: isAuthenticated && !!username && !!tag,
   });
+
+  const updateUser = async () => {
+    setUpdate(true);
+    await updateUserInfo(username.toLowerCase(), tag.toLowerCase());
+    await refetch();
+    setUpdate(false);
+  };
+
+  //const setChampionInfo = (champions: ) => { setChampions(champions); };
 
   if (isLoading) {
     return <div>Loading...</div>;
@@ -35,25 +50,20 @@ const UserPage = ({
   }
 
   if (!isAuthenticated) {
-    return <div>You are unauthorized to view this content.</div>;
+    return <div>Authenticating...</div>;
   }
 
-  if (!userData) {
-    return <div>User not found.</div>;
+  if (!userData?.puuid) {
+    return <div>User does not exist.</div>;
   }
-  //const riotUser = userData.riot_id;
+
   return (
-    //need to store a user in the database on query
     <div>
       <User data={userData} />
-      {
-        // most picked champs (w-l with champ)
-        // recently played with (include w-l with this player)
-        // match history
-      }
-      <button>Update</button>
       <p>Last updated: {userData.last_updated}</p>
-      {<MatchHistory puuid={userData.puuid} />}
+      <button onClick={updateUser}>Update</button>
+      <MatchHistory puuid={userData.puuid} />
+      <ChampionStatistics puuid={userData.puuid} />
     </div>
   );
 };

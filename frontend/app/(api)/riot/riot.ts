@@ -40,3 +40,18 @@ export const getGameInformation = async (puuid: string, match_id: string) => {
     throw error;
   }
 };
+
+export const updateUserInfo = async (
+  username: string,
+  tag: string
+): Promise<IRiotAccount> => {
+  try {
+    const res = await axiosInstance.put<IRiotAccount>(
+      `${API_URL}/riot/user/${username}/${tag}`
+    );
+    return res.data as IRiotAccount;
+  } catch (error) {
+    console.error("Error fetching data", error);
+    throw error;
+  }
+};

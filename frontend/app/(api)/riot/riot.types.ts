@@ -10,3 +10,10 @@ export interface IRiotAccount {
   losses: number;
   last_updated: string;
 }
+
+export interface IChampion {
+  championId: number;
+  championName: string;
+  wins: number;
+  losses: number;
+}

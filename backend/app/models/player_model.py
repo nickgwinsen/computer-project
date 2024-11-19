@@ -21,5 +21,6 @@ class Player(SQLModel, table=True):
     ward: int
     puuid: str
     champion_id: int
+    champion_name: str | None
     lane: str
     win: bool
