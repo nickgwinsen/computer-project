@@ -5,9 +5,15 @@ import isEmail from "validator/lib/isEmail";
 import { useRouter } from "next/navigation";
 import { API_URL } from "@/config/constants";
 import { useAuth } from "../providers/authProvider";
-//import { useNavigate } from 'react-router-dom'
+import {
+  Container,
+  TextField,
+  Button,
+  Typography,
+  Box,
+  InputLabel,
+} from "@mui/material";
 
-//TODO: update typing later
 const Login = () => {
   const { isAuthenticated } = useAuth();
   const [loading, isLoading] = useState(true);
@@ -15,7 +21,6 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const [emailError, setEmailError] = useState("");
   const [passwordError, setPasswordError] = useState("");
-  //  const navigate = useNavigate()
   const router = useRouter();
 
   if (isAuthenticated) {
@@ -74,40 +79,54 @@ const Login = () => {
   };
 
   return (
-    <div className={"mainContainer"}>
-      <div className={"titleContainer"}>
-        <div>Login</div>
-      </div>
-      <br />
-      <div className={"inputContainer"}>
-        <input
-          value={email}
-          placeholder="Enter your email here"
-          onChange={(ev) => setEmail(ev.target.value)}
-          className={"inputBox"}
-        />
-        <label className="errorLabel">{emailError}</label>
-      </div>
-      <br />
-      <div className={"inputContainer"}>
-        <input
-          value={password}
-          placeholder="Enter your password here"
-          onChange={(ev) => setPassword(ev.target.value)}
-          className={"inputBox"}
-        />
-        <label className="errorLabel">{passwordError}</label>
-      </div>
-      <br />
-      <div className={"inputContainer"}>
-        <input
-          className={"inputButton"}
-          type="button"
-          onClick={onButtonClick}
-          value={"Log in"}
-        />
-      </div>
-    </div>
+    <Container maxWidth="sm">
+      <Box mt={5}>
+        <Typography variant="h4" component="h1" gutterBottom>
+          Login
+        </Typography>
+        <Box mt={2}>
+          <TextField
+            fullWidth
+            label="Email"
+            value={email}
+            onChange={(ev) => setEmail(ev.target.value)}
+            error={!!emailError}
+            helperText={emailError}
+            variant="outlined"
+            margin="normal"
+            InputLabelProps={{
+              style: { color: "#fff" }, // Label color
+            }}
+            InputProps={{
+              style: { color: "#fff" }, // Input text color
+            }}
+          />
+        </Box>
+        <Box mt={2}>
+          <TextField
+            fullWidth
+            label="Password"
+            type="password"
+            value={password}
+            onChange={(ev) => setPassword(ev.target.value)}
+            error={!!passwordError}
+            helperText={passwordError}
+            variant="outlined"
+            margin="normal"
+          />
+        </Box>
+        <Box mt={2}>
+          <Button
+            fullWidth
+            variant="contained"
+            color="primary"
+            onClick={onButtonClick}
+          >
+            Log in
+          </Button>
+        </Box>
+      </Box>
+    </Container>
   );
 };
 

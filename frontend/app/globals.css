@@ -1,9 +1,13 @@
+html,
+body {
+  height: 100%;
+}
+
 body {
   margin: 0;
   font-family: "Arial", sans-serif;
   background-color: #1e2029;
   color: #ffffff;
-  min-height: 100vh;
 }
 
 a {
@@ -19,13 +23,6 @@ a:hover {
   max-width: 1200px;
   margin: 0 auto;
   padding: 1rem;
-}
-
-header,
-footer {
-  background-color: #1c1c1e;
-  padding: 1rem;
-  text-align: center;
 }
 
 button {

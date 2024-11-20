@@ -4,6 +4,8 @@ import "./globals.css";
 import AuthProvider from "./providers/authProvider";
 import { createTheme } from "@mui/material";
 import { ThemeProvider } from "@mui/material";
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
 
 const queryClient = new QueryClient();
 
@@ -31,13 +33,17 @@ export default function RootLayout({
       {
         // We must ensure our app is wrapped by the AuthProvider we created or else the useAuth hook will not work
       }
-      <ThemeProvider theme={theme}>
-        <AuthProvider>
-          <QueryClientProvider client={queryClient}>
-            <body>{children}</body>
-          </QueryClientProvider>
-        </AuthProvider>
-      </ThemeProvider>
+      <body>
+        <ThemeProvider theme={theme}>
+          <AuthProvider>
+            <QueryClientProvider client={queryClient}>
+              <Header />
+              {children}
+              <Footer />
+            </QueryClientProvider>
+          </AuthProvider>
+        </ThemeProvider>
+      </body>
     </html>
   );
 }
