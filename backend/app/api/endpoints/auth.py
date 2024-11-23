@@ -8,11 +8,12 @@ from app import models, schemas, utils, crud, config
 router = APIRouter()
 
 
-@router.get("/verify-token")
+@router.get("/user/verify-token")
 async def verify_token(request: Request):
-    token = request.cookies.get("authtoken")
-    if token is None:
-        raise HTTPException(status_code=400, detail="Authorization header is required")
+    auth_header = request.headers.get("Authorization")
+    if not auth_header or not auth_header.startswith("Bearer "):
+        raise HTTPException(status_code=401, detail="Invalid authorization header")
+    token = auth_header.split(" ")[1]
     utils.crypt.decode_access_token(token)
     return {"message": "Token is valid"}
 
@@ -26,15 +27,20 @@ async def auth_login(user: schemas.UserIn, db: SessionDep, response: Response):
     if not verified:
         raise HTTPException(status_code=400, detail="Incorrect password")
     access_token_expires = config.variables.ACCESS_TOKEN_EXPIRY
+    refresh_token_expires = config.variables.REFRESH_TOKEN_EXPIRY
     response.set_cookie(
-        key="authtoken",
-        value=utils.crypt.create_access_token(result["email"], access_token_expires),
+        key="refresh_token",
+        value=utils.crypt.create_refresh_token(result["email"], refresh_token_expires),
         httponly=True,
         max_age=access_token_expires,
         expires=access_token_expires,
         path="/",
     )
-    return {"message": "Login successful"}
+    return {
+        "access_token": utils.crypt.create_access_token(
+            result["email"], access_token_expires
+        )
+    }
 
 
 @router.post("/user/signup", response_model=schemas.UserOut)
@@ -50,10 +56,27 @@ async def auth_signup(user: schemas.UserIn, db: SessionDep):
     return user
 
 
-@router.get("/logout")
-async def auth_logout(response: Response):
-    response.delete_cookie(key="authtoken", path="/")
-    # return RedirectResponse("/login")
+@router.get("/user/refresh")
+async def refresh_token(request: Request):
+    token = request.cookies.get("refresh_token")
+    # print(token)
+    user_email = utils.crypt.decode_refresh_token(token)
+    print(user_email)
+    if user_email:
+        access_token_expires = config.variables.ACCESS_TOKEN_EXPIRY
+        return {
+            "access_token": utils.crypt.create_access_token(
+                user_email, access_token_expires
+            )
+        }
+    else:
+        raise HTTPException(status_code=403, detail="Invalid token")
+
+
+@router.get("/user/logout")
+async def logout(response: Response):
+    response.delete_cookie(key="refresh_token", path="/")
+    return {"message": "Successfully logged out"}
 
 
 # TODO: 2 factor auth, forgot password, logout, jwt functionality

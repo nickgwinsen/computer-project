@@ -1,7 +1,7 @@
 "use client";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import "./globals.css";
-import AuthProvider from "./providers/authProvider";
+import AuthProvider from "@/app/providers/authProvider";
 import { createTheme } from "@mui/material";
 import { ThemeProvider } from "@mui/material";
 import Header from "@/components/Header";

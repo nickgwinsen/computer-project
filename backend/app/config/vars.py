@@ -8,9 +8,11 @@ load_dotenv()
 class Variables:
     API_KEY = os.getenv("API_KEY")
     DB_STRING = os.getenv("POSTGRES_STRING")
-    SECRET_KEY = os.getenv("SECRET_KEY")
+    SECRET_ACCESS_KEY = os.getenv("SECRET_ACCESS_KEY")
+    SECRET_REFRESH_KEY = os.getenv("SECRET_REFRESH_KEY")
     ALEMBIC_PATH = os.getenv("ALEMBIC_PATH")
     ACCESS_TOKEN_EXPIRY = 60 * 60 * 2  # 2 hrs
+    REFRESH_TOKEN_EXPIRY = 60 * 60 * 24  # 1 day
 
 
 variables = Variables()

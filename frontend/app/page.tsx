@@ -8,40 +8,36 @@ import {
   TextField,
   IconButton,
   Paper,
+  Box,
 } from "@mui/material";
-import SearchIcon from "@mui/icons-material/Search";
+import SearchBar from "@/components/SearchBar";
 
 const HomePage = () => {
   return (
     <>
       {/* Main Content */}
-      <Container style={{ marginTop: "20px", color: "#ffffff" }}>
-        <Typography variant="h4" gutterBottom>
-          Welcome to League of Lookup
-        </Typography>
-        <Typography variant="body1" paragraph>
-          Find stats, rankings, and more for your favorite games.
-        </Typography>
-
-        <Card
+      <Container
+        maxWidth="xl"
+        sx={{
+          marginTop: "20px",
+          color: "#ffffff",
+        }}
+      >
+        <Box
           sx={{
-            backgroundColor: "#3b3d4d",
-            color: "#ffffff",
-            borderRadius: "25px",
+            display: "flex",
+            justifyContent: "left",
+            marginBottom: "20px",
           }}
         >
-          <CardContent>
-            <TextField
-              variant="outlined"
-              fullWidth
-              placeholder="Search for a game..."
-              sx={{ backgroundColor: "#2b2d3d", color: "#ffffff" }}
-            />
-            <IconButton type="button" sx={{ p: "10px" }} aria-label="search">
-              <SearchIcon />
-            </IconButton>
-          </CardContent>
-        </Card>
+          <Typography variant="h4" gutterBottom sx={{}}>
+            <strong>Welcome to League of Lookup!</strong>
+          </Typography>
+        </Box>
+        <Typography variant="body1" paragraph>
+          Search your stats or a champion!
+        </Typography>
+        <SearchBar />
       </Container>
     </>
   );
