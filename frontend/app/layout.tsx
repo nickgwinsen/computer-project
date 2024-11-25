@@ -2,7 +2,7 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import "./globals.css";
 import AuthProvider from "@/app/providers/authProvider";
-import { createTheme } from "@mui/material";
+import { Container, createTheme } from "@mui/material";
 import { ThemeProvider } from "@mui/material";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -38,7 +38,15 @@ export default function RootLayout({
           <AuthProvider>
             <QueryClientProvider client={queryClient}>
               <Header />
-              {children}
+              <Container
+                sx={{
+                  display: "flex",
+                  flexDirection: "column",
+                  minHeight: "100vh",
+                }}
+              >
+                {children}
+              </Container>
               <Footer />
             </QueryClientProvider>
           </AuthProvider>

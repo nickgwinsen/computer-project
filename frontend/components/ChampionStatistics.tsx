@@ -1,10 +1,33 @@
-//compile all champion statistics and the win rate of the champ.
+import React from "react";
 
-const ChampionStatistics = ({ puuid }: { puuid: string }) => {
+interface Champion {
+  name: string;
+  imageUrl: string;
+  averageCs: number;
+  averageKda: string;
+  winRate: number;
+  gamesPlayed: number;
+}
+
+interface ChampionStatisticsProps {
+  champions: Champion[];
+}
+
+const ChampionStatistics: React.FC<ChampionStatisticsProps> = ({
+  champions,
+}) => {
   return (
     <div>
-      <h1>Champion Statistics</h1>
-      <h2>{puuid}</h2>
+      {champions.map((champion, index) => (
+        <div key={index} className="champion-statistics">
+          <img src={champion.imageUrl} alt={champion.name} />
+          <h2>{champion.name}</h2>
+          <p>Average CS: {champion.averageCs}</p>
+          <p>Average KDA: {champion.averageKda}</p>
+          <p>Win Rate: {champion.winRate}%</p>
+          <p>Games Played: {champion.gamesPlayed}</p>
+        </div>
+      ))}
     </div>
   );
 };

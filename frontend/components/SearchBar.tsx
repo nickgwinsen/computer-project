@@ -26,6 +26,7 @@ const SearchBar = () => {
     <>
       <Card
         sx={{
+          flexGrow: 1,
           borderRadius: "50px",
           display: "flex",
           flexDirection: "row",
@@ -54,7 +55,9 @@ const SearchBar = () => {
               slotProps={{
                 input: {
                   startAdornment: <InputAdornment position="start" />,
+                  sx: { color: "#fff" },
                 },
+                inputLabel: { sx: { color: "#fff" } },
               }}
             ></TextField>
           </form>

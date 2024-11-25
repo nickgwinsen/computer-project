@@ -53,6 +53,7 @@ class Player(BaseModel):
     ward: int
     puuid: str
     champion_id: int
+    champion_name: str
     lane: str
     win: bool
 
@@ -68,7 +69,7 @@ class Stat(BaseModel):
     kills: int
     assists: int
     deaths: int
-    minion_kills: int
+    cs: int
     champion_level: int
     total_damage_dealt: int
     total_damage_taken: int

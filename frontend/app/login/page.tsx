@@ -1,6 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import axios from "axios";
+import Link from "next/link";
 import isEmail from "validator/lib/isEmail";
 import { useRouter } from "next/navigation";
 import { API_URL } from "@/config/constants";
@@ -132,6 +133,9 @@ const Login = () => {
             >
               Log in
             </Button>
+            <Typography variant="body1" sx={{ mt: 2 }}>
+              No account? <Link href={"/register"}>Sign up.</Link>
+            </Typography>
           </Box>
         </Box>
       </Container>

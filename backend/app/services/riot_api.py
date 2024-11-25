@@ -85,7 +85,6 @@ def get_ranked_match_history(puuid: str, start_time: int | None) -> list:
         res.raise_for_status()
         data = res.json()
         # data is a list of match ids, 20 in total
-        print("Riot API Response: ", data)
         return data
     except requests.exceptions.RequestException as e:
         print("Error: ", e)
@@ -132,6 +131,7 @@ def query_match_stats(match_id: str) -> dict:
                         "deaths": participant["deaths"],
                         "assists": participant["assists"],
                         "minion_kills": participant["totalMinionsKilled"],
+                        "jungle_kills": participant["neutralMinionsKilled"],
                         "champion_level": participant["champLevel"],
                         "total_damage_dealt": participant[
                             "totalDamageDealtToChampions"
@@ -221,7 +221,8 @@ def create_stats_from_matchdata(
                 kills=stat["stat"]["kills"],
                 assists=stat["stat"]["assists"],
                 deaths=stat["stat"]["deaths"],
-                minion_kills=stat["stat"]["minion_kills"],
+                minion_kills=stat["stat"]["minion_kills"]
+                + stat["stat"]["jungle_kills"],
                 champion_level=stat["stat"]["champion_level"],
                 total_damage_dealt=stat["stat"]["total_damage_dealt"],
                 total_damage_taken=stat["stat"]["total_damage_taken"],

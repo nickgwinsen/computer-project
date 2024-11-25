@@ -10,7 +10,7 @@ body {
   margin: 0;
   font-family: "Arial", sans-serif;
   background-color: #1e2029;
-  color: #ffffff;
+  color: #fefff8;
 }
 
 a {
@@ -26,17 +26,4 @@ a:hover {
   max-width: 1200px;
   margin: 0 auto;
   padding: 1rem;
-}
-
-button {
-  background-color: #52c3ff;
-  border: none;
-  border-radius: 5px;
-  color: white;
-  padding: 0.5rem 1rem;
-  cursor: pointer;
-}
-
-button:hover {
-  background-color: #4aace0;
 }

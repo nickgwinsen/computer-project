@@ -1,9 +1,27 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { getGameInformation } from "@/app/(api)/riot/riot";
 import { useQuery } from "@tanstack/react-query";
+import { Paper, Card, CardContent } from "@mui/material";
+//import { BASE_DD_URL } from "@/config/constants";
 
-const Match = ({ puuid, match_id }: { puuid: string; match_id: string }) => {
+const Match = ({
+  puuid,
+  match_id,
+  setWins,
+  setLosses,
+  setTeammates,
+  setRoles,
+  setChampions,
+}: {
+  puuid: string;
+  match_id: string;
+  setWins: React.Dispatch<React.SetStateAction<number>>;
+  setLosses: React.Dispatch<React.SetStateAction<number>>;
+  setTeammates: (teammates: string[]) => void;
+  setRoles: (role: string) => void;
+  setChampions: (champ: string) => void;
+}) => {
   const {
     data: matchData,
     error: queryError,
@@ -15,6 +33,19 @@ const Match = ({ puuid, match_id }: { puuid: string; match_id: string }) => {
     },
     enabled: !!puuid && !!match_id,
   });
+  useEffect(() => {
+    if (matchData) {
+      if (matchData.player.win) {
+        setWins((prev) => prev + 1);
+      } else {
+        setLosses((prev) => prev + 1);
+      }
+      setTeammates(matchData.match.all_players);
+      setRoles(matchData.player.lane);
+      setChampions(matchData.player.champion_id);
+    }
+  }, [matchData]);
+
   if (isLoading) {
     return <div>Loading...</div>;
   }
@@ -24,8 +55,26 @@ const Match = ({ puuid, match_id }: { puuid: string; match_id: string }) => {
   if (!matchData) {
     return <div>No match found.</div>;
   }
-  const matchInfo = JSON.stringify(matchData);
-  return <p>{matchInfo}</p>;
+  return (
+    <Paper
+      elevation={1}
+      sx={{
+        margin: "10px",
+        paddingLeft: "10px",
+        backgroundColor: matchData.player.win ? "#3b82f6" : "#ef4444",
+        borderLeft: "10px",
+      }}
+    >
+      <Card
+        sx={{
+          backgroundColor: matchData.player.win ? "#28344f" : "#58343b",
+          minHeight: "140px",
+        }}
+      >
+        <CardContent></CardContent>
+      </Card>
+    </Paper>
+  );
 };
 
 export default Match;
