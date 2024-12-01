@@ -29,7 +29,7 @@ const WinLossPieChart = ({
       ]}
       width={200}
       height={200}
-      sx={{ border: "none" }}
+      sx={{ border: "none", outline: "none", stroke: "none", padding: "none" }}
     >
       <Typography>Test</Typography>
     </PieChart>

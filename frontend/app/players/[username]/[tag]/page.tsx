@@ -10,17 +10,23 @@ import ProtectedRoute from "@/components/ProtectedRoute";
 import RecentGamesCard from "@/components/RecentGamesCard";
 import RankedCard from "@/components/RankedCard";
 import RecentTeammatesCard from "@/components/RecentTeammatesCard";
-
+import { CircularProgress } from "@mui/material";
+import { Teammate } from "@/components/RecentTeammatesCard";
 const UserPage = ({
   params,
 }: {
   params: { username: string; tag: string };
 }) => {
   const { username, tag } = params;
-  const [winLoss, setWinLoss] = useState(0);
-  const [commonTeammates, setCommonTeammates] = useState({});
-  const [preferredRoles, setPreferredRoles] = useState({});
+  const [wins, setWins] = useState(0);
+  const [losses, setLosses] = useState(0);
+  const [totalKills, setTotalKills] = useState(0);
+  const [totalAssists, setTotalAssists] = useState(0);
+  const [totalDeaths, setTotalDeaths] = useState(0);
 
+  const [commonTeammates, setCommonTeammates] = useState<Teammate[]>([]);
+  const [preferredRoles, setPreferredRoles] = useState({});
+  const [preferredChampions, setPreferredChampions] = useState({});
   // const router = useRouter();
   const {
     data: userData,
@@ -37,7 +43,18 @@ const UserPage = ({
   //const setChampionInfo = (champions: ) => { setChampions(champions); };
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return (
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100vh",
+        }}
+      >
+        <CircularProgress />
+      </Box>
+    );
   }
 
   if (queryError) {
@@ -47,7 +64,6 @@ const UserPage = ({
   if (!userData?.puuid) {
     return <div>User does not exist.</div>;
   }
-
   return (
     <ProtectedRoute>
       <User data={userData} />
@@ -67,24 +83,40 @@ const UserPage = ({
           }}
         >
           <ChampionStatistics champions={[]} />
-          <RankedCard rankImage="" rankTitle="" lp={0} wins={0} losses={0} />
-          <RecentTeammatesCard teammates={[]} />
+          <RankedCard
+            tier={userData.tier}
+            rank={userData.rank}
+            lp={userData.league_points}
+            wins={userData.wins}
+            losses={userData.losses}
+          />
+          <RecentTeammatesCard teammates={commonTeammates} />
         </Box>
         <Box
           sx={{
             display: "flex",
             flexDirection: "column",
-            alignItems: "flex-start",
-            justifyContent: "flex-start",
+            alignItems: "center",
+            justifyContent: "center",
             width: "100%",
           }}
         >
-          <RecentGamesCard />
+          <RecentGamesCard
+            wins={wins}
+            losses={losses}
+            totalKills={totalKills}
+            totalDeaths={totalDeaths}
+            totalAssists={totalAssists}
+            champions={preferredChampions}
+            roles={preferredRoles}
+          />
           <MatchHistory
             puuid={userData.puuid}
-            setWinLoss={setWinLoss}
+            setWinsTop={setWins}
+            setLossesTop={setLosses}
             setCommonTeammates={setCommonTeammates}
             setPreferredRoles={setPreferredRoles}
+            setPreferredChampions={setPreferredChampions}
           />
         </Box>
       </Box>

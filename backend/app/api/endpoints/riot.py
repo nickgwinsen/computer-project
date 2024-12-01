@@ -129,14 +129,14 @@ async def get_match_information(
             if stat.player_id == curr_player.id:
                 return_stat = stat
                 break
-    ret_dict = {"match": match, "player": curr_player, "stat": return_stat}
+    ret_dict = {"match": match, "player": curr_player, "stats": return_stat}
     response.headers["Cache-Control"] = "public, max-age=86400"
     response.headers["ETag"] = f"{match_id}-{puuid}"
     return ret_dict
     # query riot for each participant's name
 
 
-@router.get("/riot/champions", response_model=dict)
+@router.get("/riot/champions", response_model=list)
 async def get_champions(db: SessionDep):
     stmt = select(models.Champion)
     result = db.exec(stmt)

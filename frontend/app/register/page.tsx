@@ -1,12 +1,147 @@
-import React from "react";
+"use client";
+import React, { useState } from "react";
+import axios from "axios";
+import Link from "next/link";
+import isEmail from "validator/lib/isEmail";
+import { useRouter } from "next/navigation";
+import { API_URL } from "@/config/constants";
+import { useAuth } from "../providers/authProvider";
+import { Container, TextField, Button, Typography, Box } from "@mui/material";
+import UnauthenticatedRoute from "@/components/UnauthenticatedRoute";
 
-const RegisterPage = () => {
+const Register = () => {
+  const { setIsAuthenticated } = useAuth();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [emailError, setEmailError] = useState("");
+  const [passwordError, setPasswordError] = useState("");
+  const router = useRouter();
+
+  const authRequest = async () => {
+    try {
+      const response = await axios.post(
+        `${API_URL}/user/signup`,
+        {
+          email,
+          password,
+        },
+        {
+          withCredentials: true,
+        }
+      );
+
+      if (response.status === 200) {
+        router.push("/login");
+      } else {
+        throw new Error(response.data.code || "Authentication Failed!");
+      }
+    } catch (error) {
+      setEmailError("An account with this email already exists. Try again.");
+      console.error("Login failed:", error);
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    setEmailError("");
+    setPasswordError("");
+
+    if (email === "") {
+      setEmailError("Enter an email");
+      return;
+    }
+
+    if (!isEmail(email)) {
+      setEmailError("Enter a valid email");
+      return;
+    }
+
+    if (password === "") {
+      setPasswordError("Please enter a password");
+      return;
+    }
+
+    if (password.length < 8) {
+      setPasswordError("Minimum length 8 not reached.");
+      return;
+    }
+
+    await authRequest();
+  };
+
   return (
-    <div>
-      <h1>Register Page</h1>
-      <p>This is a placeholder for the register page.</p>
-    </div>
+    <UnauthenticatedRoute>
+      <Container maxWidth="sm">
+        <Box mt={5}>
+          <Typography variant="h4" component="h1" gutterBottom>
+            Sign Up
+          </Typography>
+          <Box mt={2}>
+            <form onSubmit={handleSubmit}>
+              <TextField
+                fullWidth
+                label="Email"
+                value={email}
+                onChange={(ev) => setEmail(ev.target.value)}
+                error={!!emailError}
+                helperText={emailError}
+                variant="outlined"
+                margin="normal"
+                slotProps={{
+                  inputLabel: { sx: { color: "#fff" } },
+                  input: { sx: { color: "#fff" } },
+                }}
+                sx={{
+                  backgroundColor: "#1b1d24",
+                  "& .MuiOutlinedInput-notchedOutline": {
+                    borderColor: "#fff",
+                    borderWidth: "2px",
+                  },
+                }}
+              />
+            </form>
+          </Box>
+          <Box mt={2}>
+            <form onSubmit={handleSubmit}>
+              <TextField
+                fullWidth
+                label="Password"
+                type="password"
+                value={password}
+                onChange={(ev) => setPassword(ev.target.value)}
+                error={!!passwordError}
+                helperText={passwordError}
+                variant="outlined"
+                margin="normal"
+                slotProps={{
+                  inputLabel: { sx: { color: "#fff" } },
+                  input: { sx: { color: "#fff" } },
+                }}
+                sx={{
+                  backgroundColor: "#1b1d24",
+                  "& .MuiOutlinedInput-notchedOutline": {
+                    borderColor: "#fff",
+                    borderWidth: "2px",
+                  },
+                }}
+              />
+            </form>
+          </Box>
+          <Box mt={2}>
+            <Button
+              fullWidth
+              variant="contained"
+              color="primary"
+              onClick={handleSubmit}
+            >
+              Log in
+            </Button>
+          </Box>
+        </Box>
+      </Container>
+    </UnauthenticatedRoute>
   );
 };
 
-export default RegisterPage;
+export default Register;

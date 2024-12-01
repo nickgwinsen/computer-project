@@ -2,15 +2,13 @@
 import { IRiotAccount } from "@/app/(api)/riot/riot.types";
 import { BASE_DD_URL } from "@/config/constants";
 import { Avatar, Box, Typography, Grid2, Divider } from "@mui/material";
-import { PieChart } from "@mui/x-charts";
-import WinLossPieChart from "./WinLossPieChart";
 
 const User = ({ data }: { data: IRiotAccount }) => {
   const username = data.riot_id.split("#")[0];
   const tag = data.riot_id.split("#")[1];
 
   return (
-    <Grid2 container spacing={3} sx={{ padding: 2 }}>
+    <Grid2 container spacing={3} sx={{ padding: 2, width: "100%" }}>
       <Box
         sx={{
           display: "flex",

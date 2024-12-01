@@ -17,7 +17,7 @@ ALGORITHM = "HS256"
 def create_access_token(
     subject: Union[str, Any] = None, expires_delta: timedelta = None
 ) -> models.Token:
-    if expires_delta:
+    if expires_delta == None:
         expire = datetime.now(timezone.utc) + timedelta(expires_delta)
     else:
         expire = datetime.now(timezone.utc) + timedelta(
@@ -67,45 +67,13 @@ def decode_access_token(token: str) -> str | None:
             token_expire, timezone.utc
         ):
             raise HTTPException(
-                status_code=status.HTTP_403_FORBIDDEN,
+                status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="Expired token",
             )
         return user_email
     except (JWTError, ValidationError):
         raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Could not validate credentials",
-        )
-
-
-def decode_refresh_token(token: str) -> str | None:
-    try:
-        payload = jwt.decode(
-            token, config.variables.SECRET_REFRESH_KEY, algorithms=[ALGORITHM]
-        )
-        user_email: str = payload.get("subj")
-        if user_email is None:
-            raise HTTPException(
-                status_code=status.HTTP_403_FORBIDDEN,
-                detail="Invalid credentials",
-            )
-        token_expire: datetime = payload.get("exp")
-        if token_expire is None:
-            raise HTTPException(
-                status_code=status.HTTP_403_FORBIDDEN,
-                detail="Invalid credentials",
-            )
-        if datetime.now(timezone.utc) > datetime.fromtimestamp(
-            token_expire, timezone.utc
-        ):
-            raise HTTPException(
-                status_code=status.HTTP_403_FORBIDDEN,
-                detail="Expired token",
-            )
-        return user_email
-    except (JWTError, ValidationError):
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
+            status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Could not validate credentials",
         )
 

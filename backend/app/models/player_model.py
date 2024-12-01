@@ -23,4 +23,5 @@ class Player(SQLModel, table=True):
     champion_id: int
     champion_name: str | None
     lane: str
+    role: str
     win: bool

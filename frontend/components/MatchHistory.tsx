@@ -4,43 +4,122 @@ import { getGamesList } from "@/app/(api)/riot/riot";
 //import Match from "./Match";
 import { useQuery } from "@tanstack/react-query";
 import Match from "./Match";
-import { Container } from "@mui/material";
+import { CircularProgress, Container } from "@mui/material";
+import { Teammate } from "./RecentTeammatesCard";
 
 const MatchHistory = ({
   puuid,
-  setWinLoss,
+  setWinsTop,
+  setLossesTop,
   setCommonTeammates,
   setPreferredRoles,
+  setPreferredChampions,
 }: {
   puuid: string;
-  setWinLoss: (winLoss: number) => void;
-  setCommonTeammates: (teammates: object) => void;
+  setWinsTop: (wins: number) => void;
+  setLossesTop: (losses: number) => void;
+  setCommonTeammates: (teammates: Teammate[]) => void;
   setPreferredRoles: (roles: object) => void;
+  setPreferredChampions: (champions: object) => void;
 }) => {
-  const [wins, setWins] = useState(0);
-  const [losses, setLosses] = useState(0);
-  const [teammates, setTeammates] = useState<{ [key: string]: number }>({});
-  const [roles, setRoles] = useState<{ [key: string]: number }>({});
-  const [champions, setChampions] = useState<{ [key: string]: number }>({});
+  const [wins, _setWins] = useState(0);
+  const [losses, _setLosses] = useState(0);
+  const [teammates, setTeammates] = useState<{
+    [key: string]: { teammate: Teammate };
+  }>({});
+  const [roles, setRoles] = useState<{
+    [key: string]: { games: number; wins: number; losses: number };
+  }>({});
+  const [champions, setChampions] = useState<{
+    [key: string]: {
+      games: number;
+      wins: number;
+      losses: number;
+      cs: number;
+      kills: number;
+      deaths: number;
+      assists: number;
+    };
+  }>({});
+  const [isFullyLoaded, setIsFullyLoaded] = useState(false);
 
-  const buildTeammates = (match_teammates: string[]): void => {
+  const buildTeammates = (match_teammates: string[], win: boolean): void => {
     for (const match_teammate of match_teammates) {
       if (match_teammate in teammates) {
-        teammates[match_teammate] += 1;
+        teammates[match_teammate].games += 1;
+        if (win) {
+          teammates[match_teammate].wins += 1;
+        } else {
+          teammates[match_teammate].losses += 1;
+        }
       } else {
-        teammates[match_teammate] = 1;
+        teammates[match_teammate] = { games: 1, wins: 0, losses: 0 };
+        if (win) {
+          teammates[match_teammate].wins = 1;
+        } else {
+          teammates[match_teammate].losses = 1;
+        }
       }
     }
     setTeammates((prevTeammates) => ({ ...prevTeammates, ...teammates }));
   };
 
-  const buildRoles = (role: string): void => {
-    if (role in roles) {
-      roles[role] += 1;
-    } else {
-      roles[role] = 1;
-    }
+  const buildRoles = (r: string, win: boolean): void => {
+    if (r)
+      if (r in roles) {
+        roles[r].games += 1;
+        if (win) {
+          roles[r].wins += 1;
+        } else {
+          roles[r].losses += 1;
+        }
+      } else {
+        roles[r] = { games: 1, wins: 0, losses: 0 };
+        if (win) {
+          roles[r].wins = 1;
+        } else {
+          roles[r].losses = 1;
+        }
+      }
     setRoles((prevRoles) => ({ ...prevRoles, ...roles }));
+  };
+
+  const buildChampions = (
+    c: string,
+    win: boolean,
+    kills: number,
+    deaths: number,
+    assists: number,
+    cs: number
+  ): void => {
+    if (c in champions) {
+      champions[c].games += 1;
+      champions[c].cs += cs;
+      champions[c].kills += kills;
+      champions[c].deaths += deaths;
+      champions[c].assists += assists;
+      if (win) {
+        champions[c].wins += 1;
+      } else {
+        champions[c].losses += 1;
+      }
+    } else {
+      champions[c] = {
+        games: 1,
+        wins: 0,
+        losses: 0,
+        cs: 0,
+        kills: 0,
+        deaths: 0,
+        assists: 0,
+      };
+      if (win) {
+        champions[c].wins = 1;
+      } else {
+        champions[c].losses = 1;
+      }
+    }
+    setChampions((prevChampions) => ({ ...prevChampions, ...champions }));
   };
 
   const {
@@ -56,7 +135,7 @@ const MatchHistory = ({
     enabled: !!puuid,
   });
   if (isLoading) {
-    return <div>Loading...</div>;
+    return <CircularProgress />;
   }
   if (queryError) {
     return <div>Error: {queryError.message}</div>;
@@ -65,10 +144,17 @@ const MatchHistory = ({
     return <div>No games found.</div>;
   }
   //will return a big structured box with all the games in it
-  console.log("Wins: ", wins);
-  console.log("Losses: ", losses);
-  console.log("Teammates: ", teammates);
-  console.log("Roles: ", roles);
+  //console.log("Wins: ", wins);
+  setWinsTop(wins);
+  //console.log("Losses: ", losses);
+  setLossesTop(losses);
+  //console.log("Teammates: ", teammates);
+  setCommonTeammates(teammates);
+  //console.log("Roles: ", roles);
+  setPreferredRoles(roles);
+  //console.log("Champions: ", champions);
+  setPreferredChampions(champions);
+
   return (
     <Container>
       {gamesData.map((game: string) => (
@@ -76,11 +162,11 @@ const MatchHistory = ({
           key={game}
           puuid={puuid}
           match_id={game}
-          setWins={setWins}
-          setLosses={setLosses}
+          setWins={_setWins}
+          setLosses={_setLosses}
           setTeammates={buildTeammates}
           setRoles={buildRoles}
-          setChampions={setChampions}
+          setChampions={buildChampions}
         />
       ))}
     </Container>

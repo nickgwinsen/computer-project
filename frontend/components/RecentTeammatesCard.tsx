@@ -5,56 +5,57 @@ import {
   CardHeader,
   Avatar,
   Typography,
-  Grid,
+  Grid2,
 } from "@mui/material";
 
-interface Teammate {
-  id: number;
-  name: string;
-  profilePicture: string;
-  level: number;
+export interface Teammate {
+  gamesPlayed: number;
   wins: number;
   losses: number;
-  gamesPlayed: number;
-  winLossPercentage: number;
 }
 
-interface RecentTeammatesCardProps {
-  teammates: Teammate[];
-}
+const RecentTeammatesCard = ({ teammates }: { teammates: Teammate[] }) => {
+  console.log("Teammates:", teammates);
+  const sortedTeammates = Array.isArray(teammates)
+    ? teammates.sort((a, b) => b.gamesPlayed - a.gamesPlayed).slice(0, 5)
+    : [];
 
-const RecentTeammatesCard: React.FC<RecentTeammatesCardProps> = ({
-  teammates,
-}) => {
+  console.log(sortedTeammates);
+
   return (
-    <Card>
+    <Card
+      sx={{
+        backgroundColor: "#2b2d3d",
+        color: "white",
+        marginTop: "1rem",
+        minWidth: "400px",
+      }}
+    >
       <CardHeader title="Recent Teammates" />
       <CardContent>
-        <Grid container spacing={2}>
-          {teammates.map((teammate) => (
-            <Grid item xs={12} sm={6} md={4} key={teammate.id}>
-              <Card>
-                <CardHeader
-                  avatar={<Avatar src={teammate.profilePicture} />}
-                  title={teammate.name}
-                  subheader={`Level ${teammate.level}`}
-                />
-                <CardContent>
-                  <Typography variant="body2">Wins: {teammate.wins}</Typography>
-                  <Typography variant="body2">
-                    Losses: {teammate.losses}
-                  </Typography>
-                  <Typography variant="body2">
-                    Games Played: {teammate.gamesPlayed}
-                  </Typography>
-                  <Typography variant="body2">
-                    Win/Loss %: {teammate.winLossPercentage.toFixed(2)}
-                  </Typography>
-                </CardContent>
-              </Card>
-            </Grid>
-          ))}
-        </Grid>
+        {sortedTeammates.map((teammate, index) => {
+          const winRate = (
+            (teammate.wins / teammate.gamesPlayed) *
+            100
+          ).toFixed(2);
+          return (
+            <Grid2 container spacing={2} key={index} alignItems="center">
+              <Grid2>
+                <Avatar>{teammate.name.charAt(0)}</Avatar>
+              </Grid2>
+              <Grid2 columnSpacing={2}>
+                <Typography variant="h6">{teammate.name}</Typography>
+                <Typography variant="body2">
+                  Games Played: {teammate.gamesPlayed}
+                </Typography>
+                <Typography variant="body2">
+                  Wins: {teammate.wins} Losses: {teammate.losses}
+                </Typography>
+                <Typography variant="body2">Win Rate: {winRate}%</Typography>
+              </Grid2>
+            </Grid2>
+          );
+        })}
       </CardContent>
     </Card>
   );

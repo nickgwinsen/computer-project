@@ -10,6 +10,7 @@ class Stat(SQLModel, table=True):
     assists: int
     deaths: int
     minion_kills: int
+    jungle_monster_kills: int
     champion_level: int
     total_damage_dealt: int
     total_damage_taken: int

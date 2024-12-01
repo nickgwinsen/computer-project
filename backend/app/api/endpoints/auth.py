@@ -32,8 +32,8 @@ async def auth_login(user: schemas.UserIn, db: SessionDep, response: Response):
         key="refresh_token",
         value=utils.crypt.create_refresh_token(result["email"], refresh_token_expires),
         httponly=True,
-        max_age=access_token_expires,
-        expires=access_token_expires,
+        max_age=refresh_token_expires,
+        expires=refresh_token_expires,
         path="/",
     )
     return {

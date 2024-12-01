@@ -17,7 +17,7 @@ const Login = () => {
   const [passwordError, setPasswordError] = useState("");
   const router = useRouter();
 
-  const authRequest = async (email: string, password: string) => {
+  const authRequest = async () => {
     try {
       const response = await axios.post(
         `${API_URL}/user/login`,
@@ -43,7 +43,9 @@ const Login = () => {
     }
   };
 
-  const onButtonClick = async () => {
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
     setEmailError("");
     setPasswordError("");
 
@@ -67,7 +69,7 @@ const Login = () => {
       return;
     }
 
-    await authRequest(email, password);
+    await authRequest();
   };
 
   return (
@@ -78,58 +80,62 @@ const Login = () => {
             Login
           </Typography>
           <Box mt={2}>
-            <TextField
-              fullWidth
-              label="Email"
-              value={email}
-              onChange={(ev) => setEmail(ev.target.value)}
-              error={!!emailError}
-              helperText={emailError}
-              variant="outlined"
-              margin="normal"
-              slotProps={{
-                inputLabel: { sx: { color: "#fff" } },
-                input: { sx: { color: "#fff" } },
-              }}
-              sx={{
-                backgroundColor: "#1b1d24",
-                "& .MuiOutlinedInput-notchedOutline": {
-                  borderColor: "#fff",
-                  borderWidth: "2px",
-                },
-              }}
-            />
+            <form onSubmit={handleSubmit}>
+              <TextField
+                fullWidth
+                label="Email"
+                value={email}
+                onChange={(ev) => setEmail(ev.target.value)}
+                error={!!emailError}
+                helperText={emailError}
+                variant="outlined"
+                margin="normal"
+                slotProps={{
+                  inputLabel: { sx: { color: "#fff" } },
+                  input: { sx: { color: "#fff" } },
+                }}
+                sx={{
+                  backgroundColor: "#1b1d24",
+                  "& .MuiOutlinedInput-notchedOutline": {
+                    borderColor: "#fff",
+                    borderWidth: "2px",
+                  },
+                }}
+              />
+            </form>
           </Box>
           <Box mt={2}>
-            <TextField
-              fullWidth
-              label="Password"
-              type="password"
-              value={password}
-              onChange={(ev) => setPassword(ev.target.value)}
-              error={!!passwordError}
-              helperText={passwordError}
-              variant="outlined"
-              margin="normal"
-              slotProps={{
-                inputLabel: { sx: { color: "#fff" } },
-                input: { sx: { color: "#fff" } },
-              }}
-              sx={{
-                backgroundColor: "#1b1d24",
-                "& .MuiOutlinedInput-notchedOutline": {
-                  borderColor: "#fff",
-                  borderWidth: "2px",
-                },
-              }}
-            />
+            <form onSubmit={handleSubmit}>
+              <TextField
+                fullWidth
+                label="Password"
+                type="password"
+                value={password}
+                onChange={(ev) => setPassword(ev.target.value)}
+                error={!!passwordError}
+                helperText={passwordError}
+                variant="outlined"
+                margin="normal"
+                slotProps={{
+                  inputLabel: { sx: { color: "#fff" } },
+                  input: { sx: { color: "#fff" } },
+                }}
+                sx={{
+                  backgroundColor: "#1b1d24",
+                  "& .MuiOutlinedInput-notchedOutline": {
+                    borderColor: "#fff",
+                    borderWidth: "2px",
+                  },
+                }}
+              />
+            </form>
           </Box>
           <Box mt={2}>
             <Button
               fullWidth
               variant="contained"
               color="primary"
-              onClick={onButtonClick}
+              onClick={handleSubmit}
             >
               Log in
             </Button>

@@ -1,3 +1,4 @@
+"use client";
 import {
   AppBar,
   Toolbar,
@@ -5,21 +6,51 @@ import {
   Button,
   TextField,
   Box,
+  IconButton,
+  Menu,
+  MenuItem,
 } from "@mui/material";
+import MenuIcon from "@mui/icons-material/Menu";
 import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
 import { useAuth } from "@/app/providers/authProvider";
+import { useState } from "react";
+import { isChampionName } from "@/app/(api)/riot/riot";
 
 const Header = () => {
-  {
-    /* Make a header component and put it in the layout folder*/
-  }
+  const [search, setSearch] = useState("");
   const { isAuthenticated, logout } = useAuth();
   const router = useRouter();
   const pathname = usePathname();
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (search.includes("#")) {
+      const [name, tag] = search.split("#");
+      router.push(`/players/${name}/${tag}`);
+      setSearch("");
+    } else if (isChampionName(search)) {
+      router.push(`/champions/${search}`);
+      setSearch("");
+    } else {
+      router.push(`/unknown`);
+      setSearch("");
+    }
+  };
+
+  const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+  };
+
   const goToLogin = () => {
     router.push("/login");
   };
+
   const renderHeaderSearch = (pathname: string) => {
     const noRender = ["/login", "/register", "/", "/champions"];
     if (noRender.includes(pathname)) {
@@ -27,6 +58,7 @@ const Header = () => {
     }
     return false;
   };
+
   return (
     <AppBar
       position="static"
@@ -60,26 +92,36 @@ const Header = () => {
           }}
         >
           {renderHeaderSearch(pathname) ? null : (
-            <TextField
-              variant="outlined"
-              size="small"
-              placeholder="Search again?"
-              sx={{
-                backgroundColor: "#1e2029",
-                borderRadius: "4px",
-                "& .MuiOutlinedInput-root": {
-                  "& fieldset": {
-                    borderColor: "#3b82f6",
-                  },
-                  "&:hover fieldset": {
-                    borderColor: "#5383e9",
-                  },
-                  "&.Mui-focused fieldset": {
-                    borderColor: "#5383e9",
-                  },
-                },
+            <form
+              onSubmit={(e) => {
+                handleSubmit(e);
+                setSearch("");
               }}
-            />
+            >
+              <TextField
+                variant="outlined"
+                size="small"
+                placeholder="Search again?"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                slotProps={{ input: { sx: { color: "#5383e9" } } }}
+                sx={{
+                  backgroundColor: "#1e2029",
+                  borderRadius: "4px",
+                  "& .MuiOutlinedInput-root": {
+                    "& fieldset": {
+                      borderColor: "#3b82f6",
+                    },
+                    "&:hover fieldset": {
+                      borderColor: "#5383e9",
+                    },
+                    "&.Mui-focused fieldset": {
+                      borderColor: "#5383e9",
+                    },
+                  },
+                }}
+              />
+            </form>
           )}
           <Link
             href="/champions"
@@ -122,6 +164,83 @@ const Header = () => {
               Login
             </Button>
           )}
+        </Box>
+        <Box
+          sx={{
+            justifyContent: "flex-end",
+            display: { xs: "flex", sm: "none" },
+          }}
+        >
+          <IconButton
+            size="large"
+            edge="start"
+            color="inherit"
+            aria-label="menu"
+            onClick={handleMenuOpen}
+          >
+            <MenuIcon />
+          </IconButton>
+          <Menu
+            anchorEl={anchorEl}
+            open={Boolean(anchorEl)}
+            onClose={handleMenuClose}
+          >
+            {renderHeaderSearch(pathname) ? null : (
+              <MenuItem>
+                <TextField
+                  variant="outlined"
+                  size="small"
+                  placeholder="Search again?"
+                  sx={{
+                    backgroundColor: "#1e2029",
+                    borderRadius: "4px",
+                    "& .MuiOutlinedInput-root": {
+                      "& fieldset": {
+                        borderColor: "#3b82f6",
+                      },
+                      "&:hover fieldset": {
+                        borderColor: "#5383e9",
+                      },
+                      "&.Mui-focused fieldset": {
+                        borderColor: "#5383e9",
+                      },
+                    },
+                  }}
+                />
+              </MenuItem>
+            )}
+            <MenuItem onClick={handleMenuClose}>
+              <Link
+                href="/champions"
+                passHref
+                style={{
+                  textDecoration: "none",
+                  color: "#3b82f6",
+                }}
+              >
+                <Typography>CHAMPIONS</Typography>
+              </Link>
+            </MenuItem>
+            {isAuthenticated ? (
+              <MenuItem
+                onClick={() => {
+                  logout();
+                  handleMenuClose();
+                }}
+              >
+                Logout
+              </MenuItem>
+            ) : (
+              <MenuItem
+                onClick={() => {
+                  goToLogin();
+                  handleMenuClose();
+                }}
+              >
+                Login
+              </MenuItem>
+            )}
+          </Menu>
         </Box>
       </Toolbar>
     </AppBar>

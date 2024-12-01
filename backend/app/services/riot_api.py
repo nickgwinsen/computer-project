@@ -123,6 +123,7 @@ def query_match_stats(match_id: str) -> dict:
                     "champion_id": participant["championId"],
                     "champion_name": participant["championName"],
                     "lane": participant["lane"],
+                    "role": participant["role"],
                     "win": participant["win"],
                     "summoner_spell1": participant["summoner1Id"],
                     "summoner_spell2": participant["summoner2Id"],
@@ -131,7 +132,7 @@ def query_match_stats(match_id: str) -> dict:
                         "deaths": participant["deaths"],
                         "assists": participant["assists"],
                         "minion_kills": participant["totalMinionsKilled"],
-                        "jungle_kills": participant["neutralMinionsKilled"],
+                        "jungle_monster_kills": participant["neutralMinionsKilled"],
                         "champion_level": participant["champLevel"],
                         "total_damage_dealt": participant[
                             "totalDamageDealtToChampions"
@@ -197,6 +198,7 @@ def create_players_from_matchdata(match_data: dict) -> List[models.Player]:
                 champion_id=player["champion_id"],
                 champion_name=player["champion_name"],
                 lane=player["lane"],
+                role=player["role"],
                 win=player["win"],
                 summoner_1=player["summoner_spell1"],
                 summoner_2=player["summoner_spell2"],
@@ -221,8 +223,8 @@ def create_stats_from_matchdata(
                 kills=stat["stat"]["kills"],
                 assists=stat["stat"]["assists"],
                 deaths=stat["stat"]["deaths"],
-                minion_kills=stat["stat"]["minion_kills"]
-                + stat["stat"]["jungle_kills"],
+                minion_kills=stat["stat"]["minion_kills"],
+                jungle_monster_kills=stat["stat"]["jungle_monster_kills"],
                 champion_level=stat["stat"]["champion_level"],
                 total_damage_dealt=stat["stat"]["total_damage_dealt"],
                 total_damage_taken=stat["stat"]["total_damage_taken"],

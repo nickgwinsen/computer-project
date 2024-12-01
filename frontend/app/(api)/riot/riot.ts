@@ -234,3 +234,50 @@ export const isChampionName = (name: string) => {
   }
   return false;
 };
+
+export const summIdToName = (id: number) => {
+  const summonerSpells: { [key: number]: string } = {
+    1: "SummonerBoost",
+    3: "SummonerExhaust",
+    4: "SummonerFlash",
+    6: "SummonerHaste",
+    7: "SummonerHeal",
+    11: "SummonerSmite",
+    12: "SummonerTeleport",
+    14: "SummonerDot",
+    21: "SummonerBarrier",
+  };
+
+  return summonerSpells[id] || "Unknown Summoner Spell";
+};
+
+export const keystoneIdToLink = (id: number) => {
+  const base =
+    "https://ddragon.leagueoflegends.com/cdn/img/perk-images/Styles/";
+  const perks: { [key: number]: string } = {
+    8000: base + "7201_Precision.png",
+    8100: base + "7200_Domination.png",
+    8200: base + "7202_Sorcery.png",
+    8300: base + "7203_Whimsy.png",
+    8400: base + "7204_Resolve.png",
+
+    8010: base + "Precision/Conqueror/Conqueror.png",
+    8008: "/static/lethaltempo.png",
+    8021: base + "Precision/FleetFootwork/FleetFootwork.png",
+    8005: "/static/presstheattack.png",
+    8112: base + "Domination/Electrocute/Electrocute.png",
+    8128: base + "Domination/DarkHarvest/DarkHarvest.png",
+    9923: base + "Domination/HailOfBlades/HailOfBlades.png",
+    8214: base + "Sorcery/SummonAery/SummonAery.png",
+    8229: base + "Sorcery/ArcaneComet/ArcaneComet.png",
+    8230: base + "Sorcery/PhaseRush/PhaseRush.png",
+    8437: base + "Resolve/GraspOfTheUndying/GraspOfTheUndying.png",
+    8439: base + "Resolve/VeteranAftershock/VeteranAftershock.png",
+    8465: base + "Resolve/Guardian/Guardian.png",
+    8351: base + "Inspiration/GlacialAugment/GlacialAugment.png",
+    8360: base + "Inspiration/UnsealedSpellbook/UnsealedSpellbook.png",
+    8369: base + "Inspiration/FirstStrike/FirstStrike.png",
+  };
+
+  return perks[id];
+};

@@ -1,8 +1,32 @@
 import React from "react";
-import { Box, Card, CardContent, Container, Paper } from "@mui/material";
+import {
+  Box,
+  Card,
+  CardContent,
+  Container,
+  Paper,
+  Typography,
+} from "@mui/material";
 import WinLossPieChart from "./WinLossPieChart";
+import VStack from "./VStack";
 
-const RecentGamesCard: React.FC = () => {
+const RecentGamesCard = ({
+  wins,
+  losses,
+  totalKills,
+  totalAssists,
+  totalDeaths,
+  champions,
+  roles,
+}: {
+  wins: number;
+  losses: number;
+  totalKills: number;
+  totalAssists: number;
+  totalDeaths: number;
+  champions: object;
+  roles: object;
+}) => {
   return (
     <Container>
       <Paper
@@ -14,6 +38,7 @@ const RecentGamesCard: React.FC = () => {
           paddingLeft: "10px",
           borderLeft: "10px",
           flexGrow: 1,
+          backgroundColor: "#3b3d4d",
         }}
       >
         <Card
@@ -21,12 +46,16 @@ const RecentGamesCard: React.FC = () => {
             display: "flex",
             minHeight: "200px",
             flexGrow: 1,
+            backgroundColor: "#2b2d3d",
           }}
         >
           <CardContent>
-            <Box>
-              <WinLossPieChart wins={10} losses={10} />
-            </Box>
+            <VStack spacing={0}>
+              <Typography sx={{ color: "white" }}>
+                {wins + losses}G {wins}W {losses}L
+              </Typography>
+              <WinLossPieChart wins={wins} losses={losses} />
+            </VStack>
           </CardContent>
         </Card>
       </Paper>
