@@ -24,7 +24,7 @@ const UserPage = ({
   const [totalAssists, setTotalAssists] = useState(0);
   const [totalDeaths, setTotalDeaths] = useState(0);
 
-  const [commonTeammates, setCommonTeammates] = useState<Teammate[]>([]);
+  const [commonTeammates, setCommonTeammates] = useState({});
   const [preferredRoles, setPreferredRoles] = useState({});
   const [preferredChampions, setPreferredChampions] = useState({});
   // const router = useRouter();
@@ -80,9 +80,9 @@ const UserPage = ({
             flexDirection: "column",
             alignItems: "center",
             justifyContent: "flex-start",
+            gap: "1rem",
           }}
         >
-          <ChampionStatistics champions={[]} />
           <RankedCard
             tier={userData.tier}
             rank={userData.rank}
@@ -90,6 +90,7 @@ const UserPage = ({
             wins={userData.wins}
             losses={userData.losses}
           />
+          <ChampionStatistics champions={preferredChampions} />
           <RecentTeammatesCard teammates={commonTeammates} />
         </Box>
         <Box

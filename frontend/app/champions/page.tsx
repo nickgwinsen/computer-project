@@ -36,6 +36,9 @@ const ChampionsPage = () => {
   });
 
   const getChampionPicture = (name: string) => {
+    if (name == "FiddleSticks") {
+      name = "Fiddlesticks";
+    }
     return `${BASE_DD_URL}/img/champion/${name}.png`;
   };
 

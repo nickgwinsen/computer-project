@@ -40,8 +40,16 @@ const Match = ({
   setLosses: React.Dispatch<React.SetStateAction<number>>;
   setTeammates: (teammates: string[], win: boolean) => void;
   setRoles: (role: string, win: boolean) => void;
-  setChampions: (champ: string, win: boolean) => void;
+  setChampions: (
+    champ: string,
+    win: boolean,
+    kills: number,
+    assists: number,
+    deaths: number,
+    cs: number
+  ) => void;
 }) => {
+  const [currentPlayer, setCurrentPlayer] = useState("");
   const [isRemake, setIsRemake] = useState(false);
   const [mins, setMins] = useState(0);
   const [secs, setSecs] = useState(0);
@@ -74,7 +82,14 @@ const Match = ({
       }
       setTeammates(matchData.match.all_players, matchData.player.win);
       setRoles(matchData.player.lane, matchData.player.win);
-      setChampions(matchData.player.champion_name, matchData.player.win);
+      setChampions(
+        matchData.player.champion_name,
+        matchData.player.win,
+        matchData.stats.kills,
+        matchData.stats.deaths,
+        matchData.stats.assists,
+        matchData.stats.jungle_monster_kills + matchData.stats.minion_kills
+      );
     }
   }, [matchData]);
 
@@ -501,6 +516,7 @@ const Match = ({
                 .slice(0, 5)
                 .map((player: string, index: number) => (
                   <Typography
+                    fontWeight={player}
                     key={index}
                     sx={{ color: "#8f94ad", fontSize: "0.6rem" }}
                   >

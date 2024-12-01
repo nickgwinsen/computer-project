@@ -6,21 +6,32 @@ import {
   Avatar,
   Typography,
   Grid2,
+  Divider,
 } from "@mui/material";
 
+// Define the Teammate interface
 export interface Teammate {
+  name: string;
   gamesPlayed: number;
   wins: number;
   losses: number;
 }
 
-const RecentTeammatesCard = ({ teammates }: { teammates: Teammate[] }) => {
-  console.log("Teammates:", teammates);
-  const sortedTeammates = Array.isArray(teammates)
-    ? teammates.sort((a, b) => b.gamesPlayed - a.gamesPlayed).slice(0, 5)
-    : [];
+const RecentTeammatesCard = ({
+  teammates,
+}: {
+  teammates: Record<string, { games: number; wins: number; losses: number }>;
+}) => {
+  const teammatesArray = Object.entries(teammates).map(([name, stats]) => ({
+    name,
+    gamesPlayed: stats.games,
+    wins: stats.wins,
+    losses: stats.losses,
+  }));
 
-  console.log(sortedTeammates);
+  const sortedTeammates = teammatesArray
+    .sort((a, b) => b.gamesPlayed - a.gamesPlayed)
+    .slice(1, 6);
 
   return (
     <Card
@@ -39,21 +50,27 @@ const RecentTeammatesCard = ({ teammates }: { teammates: Teammate[] }) => {
             100
           ).toFixed(2);
           return (
-            <Grid2 container spacing={2} key={index} alignItems="center">
-              <Grid2>
-                <Avatar>{teammate.name.charAt(0)}</Avatar>
+            <>
+              <Grid2 container spacing={2} key={index} alignItems="center">
+                <Grid2 columnSpacing={2}>
+                  <Typography variant="h6">{teammate.name}</Typography>
+                  <Typography variant="body2">
+                    Games Played: {teammate.gamesPlayed}
+                  </Typography>
+                  <Typography variant="body2">
+                    Wins: {teammate.wins} Losses: {teammate.losses}
+                  </Typography>
+                  <Typography variant="body2">Win Rate: {winRate}%</Typography>
+                </Grid2>
               </Grid2>
-              <Grid2 columnSpacing={2}>
-                <Typography variant="h6">{teammate.name}</Typography>
-                <Typography variant="body2">
-                  Games Played: {teammate.gamesPlayed}
-                </Typography>
-                <Typography variant="body2">
-                  Wins: {teammate.wins} Losses: {teammate.losses}
-                </Typography>
-                <Typography variant="body2">Win Rate: {winRate}%</Typography>
-              </Grid2>
-            </Grid2>
+              <Divider
+                sx={{
+                  backgroundColor: "#fff",
+                  marginTop: "1rem",
+                  marginBottom: "1rem",
+                }}
+              />
+            </>
           );
         })}
       </CardContent>

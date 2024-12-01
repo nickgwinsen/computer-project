@@ -18,14 +18,16 @@ const MatchHistory = ({
   puuid: string;
   setWinsTop: (wins: number) => void;
   setLossesTop: (losses: number) => void;
-  setCommonTeammates: (teammates: Teammate[]) => void;
+  setCommonTeammates: (teammate: {
+    [key: string]: { games: number; wins: number; losses: number };
+  }) => void;
   setPreferredRoles: (roles: object) => void;
   setPreferredChampions: (champions: object) => void;
 }) => {
   const [wins, _setWins] = useState(0);
   const [losses, _setLosses] = useState(0);
   const [teammates, setTeammates] = useState<{
-    [key: string]: { teammate: Teammate };
+    [key: string]: { games: number; wins: number; losses: number };
   }>({});
   const [roles, setRoles] = useState<{
     [key: string]: { games: number; wins: number; losses: number };
@@ -93,11 +95,12 @@ const MatchHistory = ({
     cs: number
   ): void => {
     if (c in champions) {
+      console.log("Champion: ", champions[c]);
       champions[c].games += 1;
-      champions[c].cs += cs;
       champions[c].kills += kills;
       champions[c].deaths += deaths;
       champions[c].assists += assists;
+      champions[c].cs += cs;
       if (win) {
         champions[c].wins += 1;
       } else {
@@ -106,12 +109,12 @@ const MatchHistory = ({
     } else {
       champions[c] = {
         games: 1,
-        wins: 0,
-        losses: 0,
-        cs: 0,
-        kills: 0,
-        deaths: 0,
-        assists: 0,
+        wins: win ? 1 : 0,
+        losses: win ? 0 : 1,
+        cs: cs,
+        kills: kills,
+        deaths: deaths,
+        assists: assists,
       };
       if (win) {
         champions[c].wins = 1;
@@ -152,7 +155,7 @@ const MatchHistory = ({
   setCommonTeammates(teammates);
   //console.log("Roles: ", roles);
   setPreferredRoles(roles);
-  //console.log("Champions: ", champions);
+  console.log("Champions: ", champions);
   setPreferredChampions(champions);
 
   return (
