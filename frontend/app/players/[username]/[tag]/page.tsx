@@ -11,7 +11,6 @@ import RecentGamesCard from "@/components/RecentGamesCard";
 import RankedCard from "@/components/RankedCard";
 import RecentTeammatesCard from "@/components/RecentTeammatesCard";
 import { CircularProgress } from "@mui/material";
-import { Teammate } from "@/components/RecentTeammatesCard";
 const UserPage = ({
   params,
 }: {
@@ -40,8 +39,6 @@ const UserPage = ({
     enabled: !!username && !!tag,
   });
 
-  //const setChampionInfo = (champions: ) => { setChampions(champions); };
-
   if (isLoading) {
     return (
       <Box
@@ -64,6 +61,7 @@ const UserPage = ({
   if (!userData?.puuid) {
     return <div>User does not exist.</div>;
   }
+  console.log(totalKills);
   return (
     <ProtectedRoute>
       <User data={userData} />
@@ -118,6 +116,9 @@ const UserPage = ({
             setCommonTeammates={setCommonTeammates}
             setPreferredRoles={setPreferredRoles}
             setPreferredChampions={setPreferredChampions}
+            setKillsTop={setTotalKills}
+            setDeathsTop={setTotalDeaths}
+            setAssistsTop={setTotalAssists}
           />
         </Box>
       </Box>

@@ -33,6 +33,9 @@ const Match = ({
   setTeammates,
   setRoles,
   setChampions,
+  setTotalKills,
+  setTotalAssists,
+  setTotalDeaths,
 }: {
   puuid: string;
   match_id: string;
@@ -48,6 +51,9 @@ const Match = ({
     deaths: number,
     cs: number
   ) => void;
+  setTotalKills: React.Dispatch<React.SetStateAction<number>>;
+  setTotalAssists: React.Dispatch<React.SetStateAction<number>>;
+  setTotalDeaths: React.Dispatch<React.SetStateAction<number>>;
 }) => {
   const [currentPlayer, setCurrentPlayer] = useState("");
   const [isRemake, setIsRemake] = useState(false);
@@ -71,6 +77,9 @@ const Match = ({
       } else {
         setLosses((prev) => prev + 1);
       }
+      setTotalKills((prev) => prev + matchData.stats.kills);
+      setTotalAssists((prev) => prev + matchData.stats.assists);
+      setTotalDeaths((prev) => prev + matchData.stats.deaths);
       const { minutes, seconds } = calculateMinutesAndSeconds(
         matchData.match.game_end_timestamp,
         matchData.match.game_create_timestamp

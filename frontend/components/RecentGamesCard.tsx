@@ -1,14 +1,15 @@
 import React from "react";
-import {
-  Box,
-  Card,
-  CardContent,
-  Container,
-  Paper,
-  Typography,
-} from "@mui/material";
+import { Card, CardContent, Container, Paper, Typography } from "@mui/material";
+import { BarChart } from "@mui/x-charts";
 import WinLossPieChart from "./WinLossPieChart";
+import HStack from "./HStack";
 import VStack from "./VStack";
+
+interface RoleStats {
+  games: number;
+  wins: number;
+  losses: number;
+}
 
 const RecentGamesCard = ({
   wins,
@@ -16,7 +17,6 @@ const RecentGamesCard = ({
   totalKills,
   totalAssists,
   totalDeaths,
-  champions,
   roles,
 }: {
   wins: number;
@@ -25,8 +25,13 @@ const RecentGamesCard = ({
   totalAssists: number;
   totalDeaths: number;
   champions: object;
-  roles: object;
+  roles: Record<string, RoleStats>;
 }) => {
+  const roleData = Object.entries(roles).map(([role, stats]) => ({
+    role,
+    games: stats.games,
+  }));
+
   return (
     <Container>
       <Paper
@@ -50,12 +55,46 @@ const RecentGamesCard = ({
           }}
         >
           <CardContent>
-            <VStack spacing={0}>
-              <Typography sx={{ color: "white" }}>
-                {wins + losses}G {wins}W {losses}L
-              </Typography>
-              <WinLossPieChart wins={wins} losses={losses} />
-            </VStack>
+            <HStack spacing={7}>
+              <VStack spacing={0}>
+                <Typography sx={{ color: "white" }}>
+                  {wins + losses}G {wins}W {losses}L
+                </Typography>
+                <WinLossPieChart wins={wins} losses={losses} />
+              </VStack>
+              <VStack>
+                <Typography variant="h6" sx={{ color: "white" }}>
+                  <strong>
+                    {((totalKills + totalAssists) / totalDeaths).toFixed(2)}: 1
+                  </strong>
+                </Typography>
+                <Typography sx={{ color: "white" }}>
+                  {(totalKills / 20).toFixed(1)}/
+                  <span style={{ color: "#ef4444" }}>
+                    {(totalDeaths / 20).toFixed(1)}
+                  </span>
+                  /{(totalAssists / 20).toFixed(1)}
+                </Typography>
+              </VStack>
+              <BarChart
+                dataset={roleData}
+                xAxis={[{ scaleType: "band", dataKey: "role" }]}
+                yAxis={[{}]}
+                series={[{ dataKey: "games", color: "#8884d8" }]}
+                width={300}
+                height={200}
+                sx={{
+                  ".MuiChartsAxis-line": {
+                    color: "white",
+                    stroke: "none",
+                  },
+                  ".MuiChartsAxis-tick": {
+                    color: "white",
+                    stroke: "none",
+                  },
+                }}
+              />
+            </HStack>
           </CardContent>
         </Card>
       </Paper>

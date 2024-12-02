@@ -5,7 +5,6 @@ import { getGamesList } from "@/app/(api)/riot/riot";
 import { useQuery } from "@tanstack/react-query";
 import Match from "./Match";
 import { CircularProgress, Container } from "@mui/material";
-import { Teammate } from "./RecentTeammatesCard";
 
 const MatchHistory = ({
   puuid,
@@ -14,6 +13,9 @@ const MatchHistory = ({
   setCommonTeammates,
   setPreferredRoles,
   setPreferredChampions,
+  setKillsTop,
+  setDeathsTop,
+  setAssistsTop,
 }: {
   puuid: string;
   setWinsTop: (wins: number) => void;
@@ -23,6 +25,9 @@ const MatchHistory = ({
   }) => void;
   setPreferredRoles: (roles: object) => void;
   setPreferredChampions: (champions: object) => void;
+  setKillsTop: (kills: number) => void;
+  setDeathsTop: (assists: number) => void;
+  setAssistsTop: (deaths: number) => void;
 }) => {
   const [wins, _setWins] = useState(0);
   const [losses, _setLosses] = useState(0);
@@ -43,7 +48,9 @@ const MatchHistory = ({
       assists: number;
     };
   }>({});
-  const [isFullyLoaded, setIsFullyLoaded] = useState(false);
+  const [kills, _setKills] = useState(0);
+  const [assists, _setAssists] = useState(0);
+  const [deaths, _setDeaths] = useState(0);
 
   const buildTeammates = (match_teammates: string[], win: boolean): void => {
     for (const match_teammate of match_teammates) {
@@ -67,22 +74,24 @@ const MatchHistory = ({
   };
 
   const buildRoles = (r: string, win: boolean): void => {
-    if (r)
-      if (r in roles) {
-        roles[r].games += 1;
-        if (win) {
-          roles[r].wins += 1;
-        } else {
-          roles[r].losses += 1;
-        }
+    if (r == "NONE") {
+      return;
+    }
+    if (r in roles) {
+      roles[r].games += 1;
+      if (win) {
+        roles[r].wins += 1;
       } else {
-        roles[r] = { games: 1, wins: 0, losses: 0 };
-        if (win) {
-          roles[r].wins = 1;
-        } else {
-          roles[r].losses = 1;
-        }
+        roles[r].losses += 1;
       }
+    } else {
+      roles[r] = { games: 1, wins: 0, losses: 0 };
+      if (win) {
+        roles[r].wins = 1;
+      } else {
+        roles[r].losses = 1;
+      }
+    }
     setRoles((prevRoles) => ({ ...prevRoles, ...roles }));
   };
 
@@ -153,11 +162,13 @@ const MatchHistory = ({
   setLossesTop(losses);
   //console.log("Teammates: ", teammates);
   setCommonTeammates(teammates);
-  //console.log("Roles: ", roles);
+  console.log("Roles: ", roles);
   setPreferredRoles(roles);
-  console.log("Champions: ", champions);
+  //console.log("Champions: ", champions);
   setPreferredChampions(champions);
-
+  setKillsTop(kills);
+  setDeathsTop(deaths);
+  setAssistsTop(assists);
   return (
     <Container>
       {gamesData.map((game: string) => (
@@ -170,6 +181,9 @@ const MatchHistory = ({
           setTeammates={buildTeammates}
           setRoles={buildRoles}
           setChampions={buildChampions}
+          setTotalKills={_setKills}
+          setTotalAssists={_setAssists}
+          setTotalDeaths={_setDeaths}
         />
       ))}
     </Container>
